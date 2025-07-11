@@ -93,7 +93,7 @@ print("Perm works!")
 
 
 curr = Hbar
-for order in range(4):
+for order in range(6):
     curr = (curr | cluster).simplify() * Rational(1, order + 1)
     Hbar += curr
 
@@ -117,10 +117,14 @@ s1_eqn = s1_eqn.subst(H40[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H40[q,q],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[q,q],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,p],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[p,p],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[p,p],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[p,p],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[q,q],0).simplify().cache()
 s3_eqn =  s3_eqn.subst(H40[p,p],0).simplify().cache()
 s3_eqn =  s3_eqn.subst(H04[q,q],0).simplify().cache()
 s3_eqn =  s3_eqn.subst(H04[p,p],0).simplify().cache()
