@@ -8,7 +8,6 @@ in the quasiparticle basis using ReducedBCSDrudge.
 
 
 from pyspark import SparkContext
-import sympy as sp
 
 from sympy import *
 
@@ -24,17 +23,17 @@ ctx = SparkContext('local[*]', 'bcs_ccsd')
 dr  = ReducedBCSDrudge(ctx)
 dr.full_simplify = True
  
-# ----------------------------------------------------------------------------
+#===================================================================================================================
 # 2) Define indices and amplitudes
-# ----------------------------------------------------------------------------
-p,q = symbols('p q')
+#===================================================================================================================
+p,q,r = symbols('p q r')
 u, v = IndexedBase('u'), IndexedBase('v')
 E0 = Symbol(r'E_0')
 H11, H20 , H02 = IndexedBase(r'H^{11}'), IndexedBase(r'H^{20}'), IndexedBase(r'H^{02}')
 H04, H40 = IndexedBase(r'H^{04}'), IndexedBase(r'H^{40}')
 H22, Hb22 = IndexedBase(r'H^{22}'), IndexedBase(r'\tilde{H}^{22}')
 H31, H13 = IndexedBase(r'H^{31}'), IndexedBase(r'H^{13}')
-
+#===================================================================================================================
 # Quasiparticle operators from drudge
 P, Pdag, N = dr.names.P, dr.names.Pdag, dr.names.N
 P_i_dag = (u[p]*v[p]+u[p]**2*Pdag[p]
@@ -62,8 +61,7 @@ N_i = 2*(v[p])*v[p] +((u[p])*u[p] - (v[p])*v[p])*N[p] +2*u[p]*(v[p])*Pdag[p]\
             +2*(u[p])*v[p]*P[p]
 N_j = 2*(v[q])*v[q] +((u[q])*u[q] - (v[q])*v[q])*N[q] +2*u[q]*(v[q])*Pdag[q]\
             +2*(u[q])*v[q]*P[q]
-# ── 3) Build the quasi‐spin operator Pᵢ† Pⱼ ──────────────────────────────────
-#expr = (e[i] - lambdai)*N[i] - G*P_i_dag*P_j
+#===================================================================================================================s
 # ----------------------------------------------------------------------------
 # 3) Build and normal-order the pairing Hamiltonian
 # ----------------------------------------------------------------------------
@@ -72,36 +70,25 @@ expr = E0+H11[p]*N[p] + H02[p]*Pdag[p] +H20[p]*P[p]+H22[p,q]*N[p]*N[q]+Hb22[p,q]
     +H40[p,q]*P[p]*P[q]+H04[p,q]*Pdag[p]*Pdag[q]+H13[p,q]*Pdag[p]*N[q]+H31[p,q]*N[q]*P[p]
 Hbar =  dr.einst(expr).normal_order().simplify().merge()
 print(Hbar.latex())
-# ----------------------------------------------------------------------------
+#====================================================================================================================
 # 4) Define CCSD cluster operators T1 and T2
 #    T1 := t1[a,i] P†_a P_i
 #    T2 := 1/2 t2[a,b,i,j] P†_a P†_b P_j P_i
-# ----------------------------------------------------------------------------
+
 t = IndexedBase('t')
 
-#w = Wild('w')
-
-#pattern = t[w, w] 
 cluster = dr.einst(
     t[p] * Pdag[p] +
     Rational(1, 2) * t[p,q] *Pdag[p]*Pdag[q]) 
 
-# Substitute t_{pp} and t_{qq} = 0
-
  
- 
-#cluster = cluster.subst(KroneckerDelta, lambda p,q: 0).simplify().cache()
- 
- 
-dr.set_symm(t, Perm([1, 0]), valence=2)
- 
-  # Enforce t[p,q] = t[q,p]
+dr.set_symm(t, Perm([1, 0]), valence=2)   # Enforce t[p,q] = t[q,p]
 print("Perm works!")
 
-# ----------------------------------------------------------------------------
+#====================================================================================================================
 # 5) Similarity-transformed Hamiltonian: Hbar = e^{-T} H e^{T}
 #    via nested commutators up to fourth order
-# ----------------------------------------------------------------------------
+
 
 curr = Hbar
 for order in range(4):
@@ -111,13 +98,7 @@ for order in range(4):
 
     continue
 
-'''c0 = Hbar
-c1 = dr.simplify(c0 | T)
-c2 = dr.simplify(c1 | T)
-c3 = dr.simplify(c2 | T)
-c4 = dr.simplify(c3 | T)
-Hbar = dr.simplify(c0 + c1 + c2/2 + c3/6 + c4/24)'''
-
+ 
 # ----------------------------------------------------------------------------
 # 6) Derive CCSD equations using eval_vev:
 #     a) Energy:   E = <0| Hbar |0>
@@ -130,6 +111,7 @@ Hbar = dr.simplify(c0 + c1 + c2/2 + c3/6 + c4/24)'''
 E_eqn  = Hbar.normal_order().eval_vev().simplify()
 s1_eqn = (P[p] * Hbar).normal_order().eval_vev().merge().simplify()
 s2_eqn = (P[p] * P[q] * Hbar).normal_order().eval_vev().merge().simplify()
+ 
 
 s1_eqn = s1_eqn.subst(t[q,q],0).simplify().cache()
 s1_eqn = s1_eqn.subst(t[p,p],0).simplify().cache()
@@ -137,7 +119,10 @@ s1_eqn = s1_eqn.subst(H40[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H40[q,q],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[q,q],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,p],0).simplify.cache()
+s2_eqn = s2_eqn.subst(t[q,q],0).simplify.cache()
 s2_eqn =  s2_eqn.subst(H40[p,p],0).simplify().cache()
+s2_eqn =  s2_eqn.subst(H40[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[p,p],0).simplify().cache()
 
