@@ -6,6 +6,10 @@ Derive CCSD (T1+T2) equations for the BCS pairing Hamiltonian
 in the quasiparticle basis using ReducedBCSDrudge.
 """
 
+import os,sys
+os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+os.environ["PYSPARK_PYTHON"]        = sys.executable
+
 
 from pyspark import SparkContext
 
@@ -119,8 +123,8 @@ s1_eqn = s1_eqn.subst(H40[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H40[q,q],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[q,q],0).simplify().cache()
-s2_eqn = s2_eqn.subst(t[p,p],0).simplify.cache()
-s2_eqn = s2_eqn.subst(t[q,q],0).simplify.cache()
+s2_eqn = s2_eqn.subst(t[p,p],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[p,p],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[q,q],0).simplify().cache()
