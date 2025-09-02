@@ -28,7 +28,7 @@ import re
 # ----------------------------------------------------------------------------
 ctx = SparkContext('local[*]', 'bcs_ccsd')
 dr  = ReducedBCSDrudge(ctx)
-dr.full_simplify = True
+dr.full_simplify = False
  
 #===================================================================================================================
 # 2) Define indices and amplitudes
@@ -91,6 +91,9 @@ cluster = dr.einst(
 
  
 dr.set_symm(t, Perm([1, 0]), valence=2)   # Enforce t[p,q] = t[q,p]
+dr.set_symm(t, Perm([1,0,2]), valence=3)
+dr.set_symm(t, Perm([0,2,1]), valence=3)
+
 print("Perm works!")
 
 #====================================================================================================================
@@ -99,7 +102,8 @@ print("Perm works!")
 
 
 curr = Hbar
-for order in range(6):
+for order in range(4):
+   # curr = (curr | cluster).expand().merge() * Rational(1, order + 1)
     curr = (curr | cluster).simplify() * Rational(1, order + 1)
     Hbar += curr
 
@@ -128,7 +132,6 @@ s2_eqn =  s2_eqn.subst(H40[p,p],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[p,p],0).simplify().cache()
-s3_eqn = (P[p] * P[q] *P[r]* Hbar).normal_order().eval_vev().merge().simplify()
 s3_eqn = s3_eqn.subst(t[p,p,p],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[q,q,q],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[p,p,q],0).simplify().cache()
