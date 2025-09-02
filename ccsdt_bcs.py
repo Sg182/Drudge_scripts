@@ -6,6 +6,12 @@ Derive CCSDT (T1+T2+T3) equations for the BCS pairing Hamiltonian
 in the quasiparticle basis using ReducedBCSDrudge.
 """
 
+import os
+import sys
+
+os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+os.environ["PYSPARK_PYTHON"]        = sys.executable
+
 
 from pyspark import SparkContext
  
@@ -81,7 +87,7 @@ t = IndexedBase('t')
 
 cluster = dr.einst(
     t[p] * Pdag[p] +
-    Rational(1, 2) * t[p,q] *Pdag[p]*Pdag[q] + Rational(1,8)*t[p,q,r]*Pdag[p]*Pdag[q]*Pdag[r]) 
+    Rational(1, 2) * t[p,q] *Pdag[p]*Pdag[q] + Rational(1,6)*t[p,q,r]*Pdag[p]*Pdag[q]*Pdag[r]) 
 
  
 dr.set_symm(t, Perm([1, 0]), valence=2)   # Enforce t[p,q] = t[q,p]
@@ -110,7 +116,6 @@ E_eqn  = Hbar.normal_order().eval_vev().simplify()
 s1_eqn = (P[p] * Hbar).normal_order().eval_vev().merge().simplify()
 s2_eqn = (P[p] * P[q] * Hbar).normal_order().eval_vev().merge().simplify()
 s3_eqn = (P[p] * P[q] *P[r]* Hbar).normal_order().eval_vev().merge().simplify()
-
 s1_eqn = s1_eqn.subst(t[q,q],0).simplify().cache()
 s1_eqn = s1_eqn.subst(t[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H40[p,p],0).simplify().cache()
@@ -123,8 +128,18 @@ s2_eqn =  s2_eqn.subst(H40[p,p],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[p,p],0).simplify().cache()
-s3_eqn = s3_eqn.subst(t[p,p],0).simplify().cache()
-s3_eqn = s3_eqn.subst(t[q,q],0).simplify().cache()
+s3_eqn = (P[p] * P[q] *P[r]* Hbar).normal_order().eval_vev().merge().simplify()
+s3_eqn = s3_eqn.subst(t[p,p,p],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[q,q,q],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[p,p,q],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[q,r,r],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[p,p,r],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[p,p,p],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[p,q,q],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[p,r,r],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[r,r,r],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[r,p,p],0).simplify().cache()
+
 s3_eqn =  s3_eqn.subst(H40[p,p],0).simplify().cache()
 s3_eqn =  s3_eqn.subst(H04[q,q],0).simplify().cache()
 s3_eqn =  s3_eqn.subst(H04[p,p],0).simplify().cache()
@@ -137,13 +152,15 @@ print('=========================================================================
 # 7) Export CCSD equations to LaTeX
 # ----------------------------------------------------------------------------
 latex_E  = E_eqn.latex()
-#latex_t1 = s1_eqn.latex()
+latex_t1 = s1_eqn.latex()
 latex_t2 = s2_eqn.latex()
-print(latex_t2)
+latex_t3 = s3_eqn.latex()
+print(latex_t3)
 latex_parts = []
 latex_parts.append(r"\paragraph{Energy: }\begin{equation}" + E_eqn.latex()  + r"\end{equation}")
-latex_parts.append(r"\paragraph{Singles (T1): }\begin{equation}"  + s1_eqn.latex() + r"\end{equation}")
+latex_parts.append(r"\paragraph{Doubles (T1): }\begin{equation}"  + s1_eqn.latex() + r"\end{equation}")
 latex_parts.append(r"\paragraph{Doubles (T2): }\begin{equation}"  + s2_eqn.latex() + r"\end{equation}")
+latex_parts.append(r"\paragraph{Doubles (T3): }\begin{equation}"  + s3_eqn.latex() + r"\end{equation}")
 
 latex_str = " "+" ".join(latex_parts)
 
