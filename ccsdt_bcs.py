@@ -19,7 +19,7 @@ from pyspark import SparkContext
 from sympy import *
 
 from drudge import *
-
+print("Hey!")
 
 import re
 
@@ -28,7 +28,7 @@ import re
 # ----------------------------------------------------------------------------
 ctx = SparkContext('local[*]', 'bcs_ccsd')
 dr  = ReducedBCSDrudge(ctx)
-dr.full_simplify = False
+dr.full_simplify = True
  
 #===================================================================================================================
 # 2) Define indices and amplitudes
@@ -59,10 +59,13 @@ P_i = (
       - conjugate(u[p])*conjugate(v[p]) * N[p]
       - conjugate(v[p])**2 * Pdag[p]
     )
-P_j = ((u[q])*(v[q])
-      + (u[q])**2 * P[q]
-      - (u[q])*(v[q]) * N[q]
-      - (v[q])**2 * Pdag[q])
+P_j = (
+        conjugate(u[q])*conjugate(v[q])
+      + conjugate(u[q])**2 * P[q]
+      - conjugate(u[q])*conjugate(v[q]) * N[q]
+      - conjugate(v[q])**2 * Pdag[q]
+    )
+ 
 #hc = P_j_dag * P_i
 N_i = 2*(v[p])*v[p] +((u[p])*u[p] - (v[p])*v[p])*N[p] +2*u[p]*(v[p])*Pdag[p]\
             +2*(u[p])*v[p]*P[p]
@@ -93,7 +96,6 @@ cluster = dr.einst(
 dr.set_symm(t, Perm([1, 0]), valence=2)   # Enforce t[p,q] = t[q,p]
 dr.set_symm(t, Perm([1,0,2]), valence=3)
 dr.set_symm(t, Perm([0,2,1]), valence=3)
-
 print("Perm works!")
 
 #====================================================================================================================
@@ -103,7 +105,6 @@ print("Perm works!")
 
 curr = Hbar
 for order in range(4):
-   # curr = (curr | cluster).expand().merge() * Rational(1, order + 1)
     curr = (curr | cluster).simplify() * Rational(1, order + 1)
     Hbar += curr
 
@@ -126,12 +127,38 @@ s1_eqn = s1_eqn.subst(H40[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[p,p],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H40[q,q],0).simplify().cache()
 s1_eqn = s1_eqn.subst(H04[q,q],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[p,p,p],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[q,q,q],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[p,p,q],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[q,r,r],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[p,p,r],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[p,p,p],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[p,q,q],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[p,r,r],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[r,r,r],0).simplify().cache()
+s1_eqn = s1_eqn.subst(t[r,p,p],0).simplify().cache()
+
 s2_eqn = s2_eqn.subst(t[p,p],0).simplify().cache()
 s2_eqn = s2_eqn.subst(t[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[p,p],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H40[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[q,q],0).simplify().cache()
 s2_eqn =  s2_eqn.subst(H04[p,p],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[q,q],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,p],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,p,p],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[q,q,q],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,p,q],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[q,r,r],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,p,r],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,p,p],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,q,q],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[p,r,r],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[r,r,r],0).simplify().cache()
+s2_eqn = s2_eqn.subst(t[r,p,p],0).simplify().cache()
+
+s3_eqn = s3_eqn.subst(t[q,q],0).simplify().cache()
+s3_eqn = s3_eqn.subst(t[p,p],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[p,p,p],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[q,q,q],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[p,p,q],0).simplify().cache()
@@ -142,7 +169,6 @@ s3_eqn = s3_eqn.subst(t[p,q,q],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[p,r,r],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[r,r,r],0).simplify().cache()
 s3_eqn = s3_eqn.subst(t[r,p,p],0).simplify().cache()
-
 s3_eqn =  s3_eqn.subst(H40[p,p],0).simplify().cache()
 s3_eqn =  s3_eqn.subst(H04[q,q],0).simplify().cache()
 s3_eqn =  s3_eqn.subst(H04[p,p],0).simplify().cache()
