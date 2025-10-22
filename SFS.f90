@@ -5679,6 +5679,152 @@
     !$omp end do
 
     !$omp end parallel
+    
+    !symmetrize W002 = PpPq
+    do p = 1, NAO
+    do q = p, NAO
+       tmp = 0.5_pr * (W002(p,q) + (W002(q,p)))
+       !tmp = 0.5_pr * (W002(p,q) + (conjg(W002(q,p)))
+       W002(p,q) = tmp
+       W002(q,p) = (tmp)
+       W002(p,p) = (0.0_pr,0.0_pr)
+    end do
+    end do
+
+    W200 = W002
+    
+    !symmetrize W210
+    do r = 1, NAO
+    do p = 1, NAO
+       W210 (p,p,r) = (0.0_pr,0.0_pr)
+    do q = p, NAO
+      tmp = 0.5_pr * (W210(p,q,r) + W210(q,p,r))            ! real
+      ! tmp = 0.5_pr * (H210(p,q,r) + conjg(H210(q,p,r)))   ! complex "Hermitian" in pq
+      W210(p,q,r) = tmp
+      W210(q,p,r) = tmp    ! or conjg(tmp) for the complex variant above
+      !H210 (p,p,r) = 0.0_pr
+    end do
+    end do
+    end do
+
+    ! symmetrize W012
+
+    do p = 1, NAO
+    do q = 1, NAO
+        W012(p,q,q) = (0.0_pr,0.0_pr)                  ! or (0.0_pr,0.0_pr) if complex
+    do r = q+1, NAO
+      tmp = 0.5_pr * (W012(p,q,r) + W012(p,r,q))
+      W012(p,q,r) = tmp
+      W012(p,r,q) = tmp
+    end do
+    end do
+    end do
+
+    !symmetrize W030
+
+    do p = 1, NAO
+    do q = p, NAO
+    do r = q, NAO
+      avg = ( W030(p,q,r) + W030(p,r,q) + W030(q,p,r) &
+            + W030(q,r,p) + W030(r,p,q) + W030(r,q,p) ) / 6.0_pr
+
+      W030(p,q,r) = avg
+      W030(p,r,q) = avg
+      W030(q,p,r) = avg
+      W030(q,r,p) = avg
+      W030(r,p,q) = avg
+      W030(r,q,p) = avg
+    end do
+    end do
+    end do
+    
+    ! symmetrize W021
+    do r = 1, NAO
+    do p = 1, NAO
+    do q = p, NAO
+      tmp = 0.5_pr * (W021(p,q,r) + W021(q,p,r))
+      W021(p,q,r) = tmp
+      W021(q,p,r) = tmp
+    end do
+    end do
+    end do
+    
+
+    ! symmetrize W201
+    do r = 1, NAO
+    do p = 1, NAO
+      W201(p,p,r) = (0.0_pr,0.0_pr)
+    do q = p+1, NAO
+      tmp = 0.5_pr * (W201(p,q,r) + W201(q,p,r))
+      W201(p,q,r) = tmp
+      W201(q,p,r) = tmp
+    end do
+    end do
+    end do
+
+
+
+    !Symmetrize W021
+    do r = 1, NAO
+    do p = 1, NAO
+    do q = p, NAO
+      tmp = 0.5_pr * (W021(p,q,r) + W021(q,p,r))
+      W021(p,q,r) = tmp
+      W021(q,p,r) = tmp
+    end do
+    end do
+    end do
+
+
+    
+    !symmetrize W102
+    do p = 1, NAO
+    do q = 1, NAO
+      W102(p,q,q) = (0.0_pr,0.0_pr)
+    do r = q+1, NAO
+      tmp = 0.5_pr * (W102(p,q,r) + W102(p,r,q))
+      W102(p,q,r) = tmp
+      W102(p,r,q) = tmp
+    end do
+    end do
+    end do
+
+
+    !symmetrize W300
+
+    do p = 1, NAO
+    do q = 1, NAO
+    do r = 1, NAO
+      if (p==q .or. q==r .or. p==r) then
+        W300(p,q,r) = (0.0_pr,0.0_pr)
+      end if
+    end do
+    end do
+    end do
+
+    do p = 1, NAO
+    do q = p+1, NAO
+    do r = q+1, NAO
+      avg = ( W300(p,q,r) + W300(p,r,q) + W300(q,p,r) &
+            + W300(q,r,p) + W300(r,p,q) + W300(r,q,p) ) / 6.0_pr
+      W300(p,q,r) = avg
+      W300(p,r,q) = avg
+      W300(q,p,r) = avg
+      W300(q,r,p) = avg
+      W300(r,p,q) = avg
+      W300(r,q,p) = avg
+    end do
+    end do
+    end do
+
+    !symmetrize W003
+
+    W003 = W300
+
+
+
+
+
     Return
     
     End Subroutine
