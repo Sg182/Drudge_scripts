@@ -2975,4 +2975,32 @@
     end do
     !$omp end do
 
+    Call Symm2(Res2,NAO)
+    Return
+    End Subroutine CCSD_SFS
+
+
+    Subroutine Symm2(T2,NAO)
+      Implicit None
+      Integer,           Intent(In)    :: NAO 
+      Complex (Kind=pr), Intent(InOut) :: T2(NAO,NAO)
+      Complex (Kind=pr), Allocatable   :: X2(:,:)
+      Integer   :: I, J
+      Integer   :: IAlloc
+! Allocate necessary space
+      Allocate(X2(NAO,NAO), Stat=IAlloc)
+! Symmetrize
+      Do I = 1, NAO
+      Do J = 1, NAO 
+        X2(I,J) = T2(I,J) + T2(J,I)
+        If(I.eq.J) X2(I,J) = Zero
+      EndDo
+      EndDo
+      T2 = X2
+! Deallocate
+      Deallocate(X2, Stat=IAlloc)
+      Return
+      End Subroutine Symm2
+
+    End Module
     !$omp end parallel
