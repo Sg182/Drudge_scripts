@@ -6,8 +6,8 @@
 
 
     Subroutine CCSD_SFS(Ene,Res1,Res2,T1,T2,NAO,  &
-        H000,H001,H100,H010,H101,H020,H200,H002,H110,H011, &
-        H030,H111,H120,H210,H021,H012,H201,H102,H003,H300)
+        H001,H100,H010,H101,H020,H200,H002,H110,H011, &
+        H030,H111,H120,H210,H021,H012,H201,H102,H003,H300)   !Don't forget to add H000 with the energy
     Implicit None
     Integer,           Intent(In)    :: NAO 
     Complex (Kind=pr), Intent(In)    :: T1(NAO)
