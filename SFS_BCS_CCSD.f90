@@ -20,7 +20,7 @@
     Complex(Kind=pr), Intent(out)  :: H003(NAO,NAO,NAO), H300(NAO,NAO,NAO)
     Complex(Kind=pr), Intent(out)  :: H201(NAO,NAO,NAO), H102(NAO,NAO,NAO)
 
-    Complex (Kind=pr), Intent(Out)   :: Res(NAO)
+    Complex (Kind=pr), Intent(Out)   :: Ene, Res1(NAO), Res2(NAO,NAO)
     Integer                          :: p, q, r, s, i, j, k, l
     
     complex (kind=pr) , dimension(:), allocatable :: tau0
