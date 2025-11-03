@@ -26,7 +26,7 @@ class SFS_1D_XXZ:
         #    self.h010[1] = -0.25 * delta
         if nmo >= 3:
             self.h010[0] = -0.25 * delta
-            for i in range(2, nmo - 1):
+            for i in range(2, nmo - 2):
                 self.h010[i] = -0.5 * delta
             #self.h010[nmo - 1] = -0.25 * delta
             #self.h010[nmo - 2] = -0.25 * delta        # site N-1
