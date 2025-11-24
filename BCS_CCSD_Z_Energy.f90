@@ -2,7 +2,7 @@ Module CC_Z_Test
 Use Precision
 Use Constants
 
-
+!Here we will us optimized Z and T
     Subroutine CCSD_Z_Ene(E,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
     Implicit None
     Integer,           Intent(In)    :: NAO
