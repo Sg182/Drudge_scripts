@@ -407,7 +407,7 @@ Use Constants
         do p=1, NAO
     
             tau8(p, q) = tau8(p, q) + ( &
-                Hb22(p, q)&
+                HT22(p, q)&
             )
     
         end do
@@ -512,7 +512,7 @@ Use Constants
         do p=1, NAO
     
             tau10(p, q) = tau10(p, q) + ( &
-                Hb22(q, p)&
+                HT22(q, p)&
             )
     
         end do
@@ -631,7 +631,7 @@ Use Constants
     do p=1, NAO
         do q=1, NAO
             tau13(p) = tau13(p) + ( &
-                t1(q) * Hb22(p, q)&
+                t1(q) * HT22(p, q)&
             )
         end do
     end do
