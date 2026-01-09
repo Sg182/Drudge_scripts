@@ -13,7 +13,7 @@ Subroutine CCSD_SpSq(SzSz,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
     Complex (Kind=pr), Intent(In)    :: H40(NAO,NAO), H31(NAO,NAO)
     Complex (Kind=pr), Intent(In)    :: H04(NAO,NAO), H13(NAO,NAO)
     Complex (Kind=pr), Intent(In)    :: H22(NAO,NAO), HT22(NAO,NAO)
-    Complex (Kind=pr), Intent(Out)   :: SzSz(NAO,NAO) 
+    Complex (Kind=pr), Intent(Out)   :: SpSq(NAO,NAO) 
     Integer                          :: p, q, r, s, i, j, k, l
 
     complex(kind=pr) :: one(NAO)
