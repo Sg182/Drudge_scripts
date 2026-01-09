@@ -16,7 +16,8 @@ Subroutine CCSD_SzSz(SzSz,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
     Complex (Kind=pr), Intent(Out)   :: SzSz(NAO,NAO) 
     Integer                          :: p, q, r, s, i, j, k, l
 
-    
+    real(Kind=pr) :: one(NAO)
+    one = 1.0_pr
     complex(kind=pr) :: tau0
 
     complex(kind=pr) , dimension(:), allocatable :: tau1
