@@ -11716,5 +11716,14 @@ Subroutine CCSD_SpSq(SzSz,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
     !$omp end do
 
     !$omp end parallel
+    do p = 1, NAO
+    do q = p, NAO
+       tmp = 0.5_pr * (SpSq(p,q) + (SpSq(q,p)))
+       !tmp = 0.5_pr * (W002(p,q) + (conjg(W002(q,p)))
+       SpSq(p,q) = tmp
+       SpSq(q,p) = (tmp)
+        
+    end do
+    end do
     end Subroutine CCSD_SpSq
     end Module 
