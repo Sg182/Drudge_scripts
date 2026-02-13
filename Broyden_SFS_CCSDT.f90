@@ -257,7 +257,7 @@
         !================= === FINAL RESIDUAL CHECK (authoritative) ==================================================================
  BLOCK
 Complex(Kind=pr), Allocatable :: fx_final(:)
-Complex(Kind=pr), Allocatable :: R1fin(:), R2fin(:,:), R3fin(:,:)
+Complex(Kind=pr), Allocatable :: R1fin(:), R2fin(:,:), R3fin(:,:,:)
 Real(Kind=pr) :: maxAll, maxR1, maxR2, maxR3
 
 
@@ -268,7 +268,7 @@ If (IAlloc/=0) Stop "Could not allocate in final residual check"
 Call Mat2Vec(xold,T1,T2,T3,NAOBrd,nBrd)    ! pack current T back to xold
 Call EvalF(xold, fx_final, NAOBrd, nBrd)   ! compute fresh residuals
 
-Call Vec2Mat(fx_final, R1fin, R2fin,R3fin, NAOBrd, nBrd)
+Call Vec2Mat(fx_final, R1fin, R2fin, R3fin, NAOBrd, nBrd)
 
 maxR1 = maxval(abs(R1fin))
 ! doubles packing i<j only:
@@ -502,9 +502,10 @@ END BLOCK
    ! Write(*,*) "NAOBrd = ", NAOBrd
    ! Write(*,*) "nBrd = ", nBrd
 
-    Call Vec2Mat(x,T1,T2,NAOBrd,nBrd)
+    Call Vec2Mat(x,T1,T2,T3,NAOBrd,nBrd)
 ! Build Residuals 
     If(DoCCD) T1 = Zero ! CCD!
+    If(DoCCSD) T3 = zero
     Call CCSD_SFS(EneBrd,Res1,Res2,Res3,T1,T2,T3,NAOBrd,  &
         H001Brd,H100Brd,H010Brd,H101Brd,H020Brd,H200Brd,H002Brd,H110Brd,H011Brd, &
         H030Brd,H111Brd,H120Brd,H210Brd,H021Brd,H012Brd,H201Brd,H102Brd,H003Brd,H300Brd)
