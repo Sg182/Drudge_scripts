@@ -1,4 +1,4 @@
-    Module Broyden_TCC
+    Module Broyden_SFS_CCSDT
 ! Implementation of modified Broyden's methods
 ! Ref: PRC 78, 014318; PRB, 38, 12807 
     Use Precision
@@ -73,8 +73,9 @@
  ! y contains T1 T2
     NAOBrd = NAO
     nsBrd = NAO                 !Made changes here
-    ndBrd = NAO*(NAO-1)/2       !
-    nBrd  = nsBrd + ndBrd       !
+    ndBrd = NAO*(NAO-1)/2
+    ntBrd = NAO*(NAO-1)*(NAO-2)/6       !
+    nBrd  = nsBrd + ndBrd + ntBrd      !
     
     
    ! Write(*,*) "After SetUp: NAOBrd = ", NAOBrd, " nBrd = ", nBrd
@@ -95,7 +96,7 @@
                Stat=IAlloc)
       If(IAlloc/=0) Stop "Could not allocate in BroydenIter"
     EndIf
-!   Write(*,*) "Entered BCS CCSD"
+   Write(*,*) "Entered SFS-BCS CCSDT"
     Open(8,File='Output',Position='Append')
     Write(8,1020)
     Write(8,1010)
@@ -103,9 +104,9 @@
     Write(8,1030)
 ! Initialize 
     If(DoCCD) T1 = Zero ! CCD!
-    If(DoCCSD) T3 = Zero
+    If(DoCCSD) T3 = Zero !CCSD
   
-    Call Mat2Vec(xold,T1,T2,NAOBrd,nBrd)
+    Call Mat2Vec(xold,T1,T2,T3,NAOBrd,nBrd)
     NIter = 0
     dT = 1.0_pr
     dF = Zero
@@ -149,9 +150,32 @@
       T2(I,J) = -One/Denom 
     EndDo
     EndDo
+
+    Do K = 3, NAO
+    Do J = 2, K-1
+    Do I = 1, J-1
+      Denom = (H101(I,I)+H101(J,J)+H101(K,K))                    &
+            + Two*(H010(I)+H010(J)+H010(K))                      &
+            + Four*( (H020(I,I)+H020(J,J)+H020(K,K))             &
+                   + Two*(H020(I,J)+H020(I,K)+H020(J,K)) )
+      call floor_complex(Denom, 0.60_pr)   ! stronger floor often helps for T3
+      T3(I,J,K) = -One/Denom
+
+      ! If you store the full symmetric tensor, you can fill permutations:
+      ! T3(I,K,J) = T3(I,J,K)
+      ! T3(J,I,K) = T3(I,J,K)
+      ! T3(J,K,I) = T3(I,J,K)
+      ! T3(K,I,J) = T3(I,J,K)
+      ! T3(K,J,I) = T3(I,J,K)
+    EndDo
+    EndDo
+    EndDo
+
+    
+
    
 
-    Call Mat2Vec(MixVec,T1,T2,NAOBrd,nBrd)
+    Call Mat2Vec(MixVec,T1,T2,T3,NAOBrd,nBrd)
 ! Start iteration
     xnew = xold
     
@@ -181,7 +205,7 @@
       Write(8,1040) Real(EneBrd),NIter,dT
       
       If (NIter > CycMax) then
-        Call Vec2Mat(xnew,T1,T2,NAOBrd,nBrd)
+        Call Vec2Mat(xnew,T1,T2,T3,NAOBrd,nBrd)
 ! checkpoint T1 and T2
         
         Open(70,File="Chk_T1",status="Replace")
@@ -206,7 +230,7 @@
      ! Write(*,*) "NAOBrd = ", NAOBrd
      ! Write(*,*) "nBrd = ", nBrd
 
-      Call Vec2Mat(xnew,T1,T2,NAOBrd,nBrd)
+      Call Vec2Mat(xnew,T1,T2,T3,NAOBrd,nBrd)
       Open(70,File="Chk_T1",status="Replace")
       Write(70,*) T1
       Close(70)
@@ -220,7 +244,7 @@
     EndDo
   
 
-    Call Vec2Mat(xnew,T1,T2,NAOBrd,nBrd)
+    Call Vec2Mat(xnew,T1,T2,T3,NAOBrd,nBrd)
     Ene = EneBrd
     Write(8,1020)
     Write(8,1050) NIter
@@ -233,18 +257,18 @@
         !================= === FINAL RESIDUAL CHECK (authoritative) ==================================================================
  BLOCK
 Complex(Kind=pr), Allocatable :: fx_final(:)
-Complex(Kind=pr), Allocatable :: R1fin(:), R2fin(:,:)
-Real(Kind=pr) :: maxAll, maxR1, maxR2
+Complex(Kind=pr), Allocatable :: R1fin(:), R2fin(:,:), R3fin(:,:)
+Real(Kind=pr) :: maxAll, maxR1, maxR2, maxR3
 
 
-Allocate(fx_final(nBrd), R1fin(NAOBrd), R2fin(NAOBrd,NAOBrd), Stat=IAlloc)
+Allocate(fx_final(nBrd), R1fin(NAOBrd), R2fin(NAOBrd,NAOBrd), R3fin(NAOBrd,NAOBrd,NAOBrd), Stat=IAlloc)
 If (IAlloc/=0) Stop "Could not allocate in final residual check"
 
 ! Evaluate F at the *final* amplitudes (xnew is already the final)
-Call Mat2Vec(xold,T1,T2,NAOBrd,nBrd)    ! pack current T back to xold
+Call Mat2Vec(xold,T1,T2,T3,NAOBrd,nBrd)    ! pack current T back to xold
 Call EvalF(xold, fx_final, NAOBrd, nBrd)   ! compute fresh residuals
 
-Call Vec2Mat(fx_final, R1fin, R2fin, NAOBrd, nBrd)
+Call Vec2Mat(fx_final, R1fin, R2fin,R3fin, NAOBrd, nBrd)
 
 maxR1 = maxval(abs(R1fin))
 ! doubles packing i<j only:
@@ -255,10 +279,20 @@ Do j=2,NAOBrd
   End Do
 End Do
 
-maxAll = max( maxR1, maxR2 )
+maxR3 = 0.0_pr
+Do k=3,NAOBrd
+  Do j=2,k-1
+    Do i=1,j-1
+      maxR3 = max(maxR3, abs(R3fin(i,j,k)))
+    End Do
+  End Do
+End Do
+
+maxAll = max( maxR1, maxR2, maxR3)
 
 write(8,'(A,1PE12.4)') 'FINAL max|Res1| = ', maxR1
 write(8,'(A,1PE12.4)') 'FINAL max|Res2| = ', maxR2
+write(8,'(A,1PE12.4)') 'FINAL max|Res3| = ', maxR3
 write(8,'(A,1PE12.4)') 'FINAL max|Res | = ', maxAll
 Call PrintAmpsResFromVec(8, xnew, fnew, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd)
 ! If not actually converged, flag it clearly:
@@ -266,7 +300,7 @@ If (maxAll > TolMax) Then
   write(8,'(A)') '*** WARNING: Residual > TolMax at exit; NOT converged by residual! ***'
 End If
 
-Deallocate(fx_final, R1fin, R2fin, Stat=IAlloc)
+Deallocate(fx_final, R1fin, R2fin,R3fin, Stat=IAlloc)
 If (IAlloc/=0) Stop "Could not deallocate in final residual check"
 END BLOCK
 
@@ -368,14 +402,15 @@ END BLOCK
     Return
     End Subroutine ShutDownBroyden
 
-    Subroutine Mat2Vec(y,T1,T2,NAOBrd,nBrd)
+    Subroutine Mat2Vec(y,T1,T2,T3,NAOBrd,nBrd)
     Implicit None
     Integer , Intent(In) :: NAOBrd, nBrd
     Complex (Kind=pr),   Intent(In)  :: T1(NAOBrd)
     Complex (Kind=pr),   Intent(In)  :: T2(NAOBrd,NAOBrd)
+    Complex (Kind=pr),   Intent(In)  :: T3(NAOBrd,NAOBrd,NAOBrd)
     Complex (Kind=pr),   Intent(Out) :: y(nBrd)
     Integer       :: IamNum
-    Integer       :: I, J
+    Integer       :: I, J,K
     IamNum = 0
 ! Put T1 into y
     Do I = 1, NAOBrd
@@ -389,6 +424,15 @@ END BLOCK
       y(IamNum) = T2(I,J)
     EndDo
     EndDo
+
+    Do K = 3, NAOBrd
+    Do J = 2, K-1
+    Do I = 1, J-1
+        IamNum    = IamNum + 1
+        y(IamNum) = T3(I,J,K)
+    EndDo
+    EndDo
+    EndDo
 ! Check compatibility between dimension of y and Utildes
   !  Write(*,*) "In Mat2Vec NAOBrd = ", NAOBrd, " nBrd = ", nBrd, "IamNum = ", IamNum
 
@@ -396,15 +440,16 @@ END BLOCK
     Return
     End Subroutine Mat2Vec
 
-    Subroutine Vec2Mat(y,T1,T2,NAOBrd,nBrd)
+    Subroutine Vec2Mat(y,T1,T2,T3,NAOBrd,nBrd)
     Implicit None
     Integer , Intent(In) :: NAOBrd, nBrd
     Complex (Kind=pr),   Intent(In)  :: y(nBrd)
     Complex (Kind=pr),   Intent(Out) :: T1(NAOBrd)
     Complex (Kind=pr),   Intent(Out) :: T2(NAOBrd,NAOBrd)
+    Complex (Kind=pr),   Intent(Out) :: T3(NAOBrd,NAOBrd,NAOBrd)
     Complex (Kind=pr)    :: tmp 
     Integer              :: IamNum
-    Integer              :: I, J
+    Integer              :: I, J, K
     IamNum = 0
 ! Get T1 from y
     Do I = 1, NAOBrd
@@ -421,6 +466,17 @@ END BLOCK
       T2(J,I)= tmp
     EndDo
     EndDo
+
+    T3 = zero
+    Do K = 3, NAOBrd
+    Do J = 2, K-1
+    Do I = 1, J-1
+        IamNum = IamNum + 1
+        T3(I,J,K)    = y(IamNum)
+        
+    EndDo
+    EndDo
+    EndDo
 ! Check compatibility between dimension of y and Utildes
    
     If(nBrd.ne.IamNum) Stop "Dimension of y is not compatible within Broyden "
@@ -432,12 +488,12 @@ END BLOCK
     Integer, Intent (In) :: nBrd, NAOBrd
     Complex (Kind=pr),   Intent(In)  :: x(nBrd)
     Complex (Kind=pr),   Intent(Out) :: fx(nBrd)
-    Complex (Kind=pr),   Allocatable :: T1(:), T2(:,:)
-    Complex (Kind=pr),   Allocatable :: Res1(:), Res2(:,:)
+    Complex (Kind=pr),   Allocatable :: T1(:), T2(:,:), T3(:,:,:)
+    Complex (Kind=pr),   Allocatable :: Res1(:), Res2(:,:), Res3(:,:,:)
     Integer                          :: IAlloc
 ! Allocate
-    Allocate(T1(NAOBrd), T2(NAOBrd,NAOBrd),     &
-             Res1(NAOBrd), Res2(NAOBrd,NAOBrd), &
+    Allocate(T1(NAOBrd), T2(NAOBrd,NAOBrd), T3(NAOBrd,NAOBrd,NAOBrd),     &
+             Res1(NAOBrd), Res2(NAOBrd,NAOBrd), Res3(NAOBrd,NAOBrd,NAOBrd), &
              Stat=IAlloc)
     If(IAlloc /= 0) Stop "Could not allocate in EvalF"
 ! Determine what T1 and T2 are
@@ -449,16 +505,17 @@ END BLOCK
     Call Vec2Mat(x,T1,T2,NAOBrd,nBrd)
 ! Build Residuals 
     If(DoCCD) T1 = Zero ! CCD!
-    Call CCSD_SFS(EneBrd,Res1,Res2,T1,T2,NAOBrd,  &
+    Call CCSD_SFS(EneBrd,Res1,Res2,Res3,T1,T2,T3,NAOBrd,  &
         H001Brd,H100Brd,H010Brd,H101Brd,H020Brd,H200Brd,H002Brd,H110Brd,H011Brd, &
         H030Brd,H111Brd,H120Brd,H210Brd,H021Brd,H012Brd,H201Brd,H102Brd,H003Brd,H300Brd)
     EneBrd = EneBrd + H000Brd
 
     If(DoCCD) Res1 = Zero ! CCD!
+    If(DoCCSD) Res3 = Zero ! CCSD
 ! Put dUtilde into dy
-    Call Mat2Vec(fx,Res1,Res2,NAOBrd,nBrd)
+    Call Mat2Vec(fx,Res1,Res2,Res3,NAOBrd,nBrd)
 ! Deallocate
-    Deallocate(T1, Res1, T2, Res2,  & 
+    Deallocate(T1, Res1, T2, Res2,T3,Res3,  & 
                Stat=IAlloc)
     If(IAlloc /= 0) Stop "Could not deallocate in EvalF"
     Return
@@ -614,49 +671,54 @@ Subroutine PrintAmpsResFromVec(unit,x,fx,NAOBrd,nBrd,nsBrd,ndBrd,ntBrd)
   Implicit None
   Integer,           Intent(In) :: unit, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd
   Complex(Kind=pr),  Intent(In) :: x(nBrd), fx(nBrd)
-  Complex(Kind=pr), Allocatable :: T1(:), T2(:,:)
-  Complex(Kind=pr), Allocatable :: R1(:), R2(:,:)
+  Complex(Kind=pr), Allocatable :: T1(:), T2(:,:),T3(:,:,:)
+  Complex(Kind=pr), Allocatable :: R1(:), R2(:,:), R3(:,:,:)
   Integer                       :: IAlloc
 
-  Allocate(T1(NAOBrd), T2(NAOBrd,NAOBrd),&
-           R1(NAOBrd), R2(NAOBrd,NAOBrd),&
+  Allocate(T1(NAOBrd), T2(NAOBrd,NAOBrd), T3(NAOBrd,NAOBrd,NAOBrd),&
+           R1(NAOBrd), R2(NAOBrd,NAOBrd), R3(NAOBrd,NAOBrd,NAOBrd),&
            Stat=IAlloc)
   If(IAlloc /= 0) Stop "Could not allocate in PrintAmpsResFromVec"
 
   ! Unpack current amplitudes and residuals using your Vec2Mat
-  Call Vec2Mat(x ,T1,T2,NAOBrd,nBrd)
-  Call Vec2Mat(fx,R1,R2,NAOBrd,nBrd)
+  Call Vec2Mat(x ,T1,T2,T3,NAOBrd,nBrd)
+  Call Vec2Mat(fx,R1,R2,R3,NAOBrd,nBrd)
 
-  Call PrintAmpsResCore(unit,'T', T1,T2, NAOBrd)
-  Call PrintAmpsResCore(unit,'R', R1,R2, NAOBrd)
+  Call PrintAmpsResCore(unit,'T', T1,T2,T3, NAOBrd)
+  Call PrintAmpsResCore(unit,'R', R1,R2, R3,NAOBrd)
 
-  Deallocate(T1,T2,R1,R2, Stat=IAlloc)
+  Deallocate(T1,T2,T3,R1,R2,R3, Stat=IAlloc)
   If(IAlloc /= 0) Stop "Could not deallocate in PrintAmpsResFromVec"
 End Subroutine PrintAmpsResFromVec
 
 
-    Subroutine PrintAmpsResCore(unit, tag, A1,A2, NAO)
+    Subroutine PrintAmpsResCore(unit, tag, A1,A2,A3, NAO)
   Implicit None
   Integer,           Intent(In) :: unit, NAO
   Character(len=*),  Intent(In) :: tag   ! 'T' or 'R'
   Complex(Kind=pr),  Intent(In) :: A1(NAO)
   Complex(Kind=pr),  Intent(In) :: A2(NAO,NAO)
+  Complex(Kind=pr),  Intent(In) :: A3(NAO,NAO,NAO)
 
   Real(Kind=pr) :: n1,n2,n3,n4, m1,m2,m3,m4
   Integer :: i,j,k,l, nshow
 
   n1 = sqrt( sum( abs(A1)**2 ) )
   n2 = sqrt( sum( abs(A2)**2 ) )
+  n3 = sqrt( sum( abs(A3)**2 ) )
 
   m1 = maxval( abs(A1) )
   m2 = maxval( abs(A2) )
+  m3 = maxval( abs(A3) )
 
   Write(unit,'(A)')        '------------- '//trim(tag)//' summary -------------'
   Write(unit,'(A,1PE12.4)') trim(tag)//'1: ||.||2 = ', n1
   Write(unit,'(A,1PE12.4)') trim(tag)//'2: ||.||2 = ', n2
+  Write(unit,'(A,1PE12.4)') trim(tag)//'3: ||.||2 = ', n3
 
   Write(unit,'(A,1PE12.4)') 'max|'//trim(tag)//'1| = ', m1
   Write(unit,'(A,1PE12.4)') 'max|'//trim(tag)//'2| = ', m2
+  Write(unit,'(A,1PE12.4)') 'max|'//trim(tag)//'3| = ', m3
 
 
   ! Print a few sample entries (packed ordering)
@@ -701,4 +763,4 @@ End Subroutine PrintAmpsResCore
 !    END SUBROUTINE LINESCAN
 !
 
-    End Module Broyden_TCC
+    End Module Broyden_SFS_CCSDT
