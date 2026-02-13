@@ -190,6 +190,9 @@
         Open(70,File="Chk_T2",status="Replace")
         Write(70,*) T2
         Close(70)
+        Open(70,File="Chk_T3",status="Replace")
+        Write(70,*) T3
+        close(70)
         Stop 'Too many cycles in PbarHbar Feedback loop'
       EndIf
 ! Prepare for the next step
@@ -210,6 +213,9 @@
       Open(70,File="Chk_T2",status="Replace")
       Write(70,*) T2
       Close(70)
+      Open(70,File="Chk_T3",status="Replace")
+      Write(70,*) T3
+      close(70)
 ! End of Debug
     EndDo
   
