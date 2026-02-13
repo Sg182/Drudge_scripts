@@ -234,6 +234,7 @@ EndDo
         Close(70)
         Open(70,File="Chk_T3",status="Replace")
         Write(70,*) T3
+        close(70)
         Open(70,File="Chk_T4",status="Replace")
         Write(70,*) T4
         Close(70)
@@ -255,6 +256,7 @@ EndDo
       Close(70)
       Open(70,File="Chk_T3",status="Replace")
       Write(70,*) T3
+      close(70)
       Open(70,File="Chk_T4",status="Replace")
       Write(70,*) T4
       Close(70)
