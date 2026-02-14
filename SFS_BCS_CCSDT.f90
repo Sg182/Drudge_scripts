@@ -1,4 +1,4 @@
-Module CCRes 
+Module CCRes_SFS 
     Use Precision
     Use Constants
 
@@ -208,14 +208,14 @@ Module CCRes
 
     complex(kind=pr) , dimension(:, :), allocatable :: tau91
 
-    !$omp parallel default(shared)
+!!$omp parallel default(shared)
 
     allocate(tau0(NAO))
-    !$omp single
+!!$omp single
     tau0 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau0(p) = tau0(p) + ( &
@@ -223,14 +223,14 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau2(NAO))
-    !$omp single
+!!$omp single
     tau2 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau2(p) = tau2(p) + ( &
@@ -238,14 +238,14 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau24(NAO))
-    !$omp single
+!!$omp single
     tau24 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau24(p) = tau24(p) + ( &
@@ -253,16 +253,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau0)
 
     allocate(tau1(NAO, NAO))
-    !$omp single
+!!$omp single
     tau1 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -272,9 +272,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -284,9 +284,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -296,11 +296,11 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau1)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau2(p) = tau2(p) + ( &
@@ -308,13 +308,13 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp single
+!!$omp single
     Ene = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static) reduction(+:Ene)
+!!$omp do schedule(static) reduction(+:Ene)
     
     do p=1, NAO
         Ene = Ene + ( &
@@ -322,16 +322,16 @@ Module CCRes
         )
     end do
     
-    !$omp end do
+!!$omp end do
 
     deallocate(tau2)
 
     allocate(tau3(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau3 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -343,9 +343,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -357,9 +357,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -371,9 +371,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -385,13 +385,13 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp single
+!!$omp single
     Res1 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -401,16 +401,16 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau3)
 
     allocate(tau4(NAO, NAO))
-    !$omp single
+!!$omp single
     tau4 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -420,14 +420,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau5(NAO, NAO))
-    !$omp single
+!!$omp single
     tau5 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -437,14 +437,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau41(NAO, NAO))
-    !$omp single
+!!$omp single
     tau41 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -454,14 +454,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau58(NAO))
-    !$omp single
+!!$omp single
     tau58 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau58(p) = tau58(p) + ( &
@@ -469,14 +469,14 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau59(NAO))
-    !$omp single
+!!$omp single
     tau59 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau59(p) = tau59(p) + ( &
@@ -484,16 +484,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau58)
 
     allocate(tau71(NAO, NAO))
-    !$omp single
+!!$omp single
     tau71 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -503,14 +503,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau76(NAO, NAO))
-    !$omp single
+!!$omp single
     tau76 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -520,13 +520,13 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp single
+!!$omp single
     Res2 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -536,11 +536,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau4)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -550,9 +550,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -562,9 +562,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -574,9 +574,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             Res1(p) = Res1(p) - ( &
@@ -584,16 +584,16 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau5)
 
     allocate(tau6(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau6 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -605,9 +605,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -619,9 +619,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -633,9 +633,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -645,16 +645,16 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau6)
 
     allocate(tau7(NAO, NAO))
-    !$omp single
+!!$omp single
     tau7 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -664,14 +664,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau14(NAO, NAO))
-    !$omp single
+!!$omp single
     tau14 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -681,14 +681,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau72(NAO, NAO))
-    !$omp single
+!!$omp single
     tau72 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -698,14 +698,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau89(NAO, NAO))
-    !$omp single
+!!$omp single
     tau89 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -715,14 +715,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau8(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau8 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -734,9 +734,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -748,9 +748,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -762,9 +762,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -774,18 +774,18 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau8)
 
     deallocate(tau7)
 
     allocate(tau9(NAO, NAO))
-    !$omp single
+!!$omp single
     tau9 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -795,9 +795,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -807,14 +807,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau15(NAO))
-    !$omp single
+!!$omp single
     tau15 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -824,14 +824,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau18(NAO))
-    !$omp single
+!!$omp single
     tau18 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) - ( &
@@ -839,9 +839,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau59(p) = tau59(p) - ( &
@@ -849,16 +849,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau15)
 
     allocate(tau20(NAO))
-    !$omp single
+!!$omp single
     tau20 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -868,14 +868,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau23(NAO))
-    !$omp single
+!!$omp single
     tau23 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau23(p) = tau23(p) + ( &
@@ -883,9 +883,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau24(p) = tau24(p) + ( &
@@ -893,14 +893,14 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau43(NAO, NAO))
-    !$omp single
+!!$omp single
     tau43 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -910,11 +910,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau20)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -924,16 +924,16 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau9)
 
     allocate(tau10(NAO))
-    !$omp single
+!!$omp single
     tau10 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau10(p) = tau10(p) + ( &
@@ -941,9 +941,9 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) + ( &
@@ -951,14 +951,14 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau82(NAO))
-    !$omp single
+!!$omp single
     tau82 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) - ( &
@@ -966,16 +966,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau10)
 
     allocate(tau11(NAO))
-    !$omp single
+!!$omp single
     tau11 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -985,9 +985,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) + ( &
@@ -995,9 +995,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau59(p) = tau59(p) + ( &
@@ -1005,16 +1005,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau11)
 
     allocate(tau12(NAO))
-    !$omp single
+!!$omp single
     tau12 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -1024,9 +1024,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) + ( &
@@ -1034,9 +1034,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau59(p) = tau59(p) + ( &
@@ -1044,16 +1044,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau12)
 
     allocate(tau13(NAO))
-    !$omp single
+!!$omp single
     tau13 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do r=1, NAO
             do q=1, NAO
@@ -1063,9 +1063,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) + ( &
@@ -1073,9 +1073,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau59(p) = tau59(p) + ( &
@@ -1083,16 +1083,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau13)
 
     allocate(tau65(NAO, NAO))
-    !$omp single
+!!$omp single
     tau65 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1102,11 +1102,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau59)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1116,9 +1116,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1128,9 +1128,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau18(p) = tau18(p) + ( &
@@ -1138,14 +1138,14 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau46(NAO, NAO))
-    !$omp single
+!!$omp single
     tau46 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1155,14 +1155,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau47(NAO, NAO))
-    !$omp single
+!!$omp single
     tau47 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1172,16 +1172,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau46)
 
     allocate(tau16(NAO, NAO))
-    !$omp single
+!!$omp single
     tau16 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1191,9 +1191,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1203,14 +1203,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau17(NAO))
-    !$omp single
+!!$omp single
     tau17 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau17(p) = tau17(p) + ( &
@@ -1218,11 +1218,11 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau16)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) - ( &
@@ -1230,9 +1230,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) + ( &
@@ -1240,11 +1240,11 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau17)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) - ( &
@@ -1252,9 +1252,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) - ( &
@@ -1262,9 +1262,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau18(p) = tau18(p) - ( &
@@ -1272,9 +1272,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         Res1(p) = Res1(p) - ( &
@@ -1282,16 +1282,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau18)
 
     allocate(tau19(NAO))
-    !$omp single
+!!$omp single
     tau19 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau19(p) = tau19(p) + ( &
@@ -1299,9 +1299,9 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau23(p) = tau23(p) - ( &
@@ -1309,14 +1309,14 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau81(NAO))
-    !$omp single
+!!$omp single
     tau81 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau81(p) = tau81(p) - ( &
@@ -1324,16 +1324,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau19)
 
     allocate(tau21(NAO, NAO))
-    !$omp single
+!!$omp single
     tau21 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1343,9 +1343,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1355,14 +1355,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau22(NAO))
-    !$omp single
+!!$omp single
     tau22 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau22(p) = tau22(p) + ( &
@@ -1370,9 +1370,9 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau23(p) = tau23(p) + ( &
@@ -1380,9 +1380,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau81(p) = tau81(p) + ( &
@@ -1390,16 +1390,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau22)
 
     allocate(tau80(NAO))
-    !$omp single
+!!$omp single
     tau80 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau80(p) = tau80(p) + ( &
@@ -1407,11 +1407,11 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau21)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) - ( &
@@ -1419,11 +1419,11 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau80)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau23(p) = tau23(p) + ( &
@@ -1431,9 +1431,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau23(p) = tau23(p) + ( &
@@ -1441,9 +1441,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau23(p) = tau23(p) + ( &
@@ -1451,9 +1451,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         Res1(p) = Res1(p) - ( &
@@ -1461,11 +1461,11 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau23)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau24(p) = tau24(p) + ( &
@@ -1473,9 +1473,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             Res1(p) = Res1(p) + ( &
@@ -1483,14 +1483,14 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau25(NAO))
-    !$omp single
+!!$omp single
     tau25 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             tau25(p) = tau25(p) + ( &
@@ -1498,14 +1498,14 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau26(NAO))
-    !$omp single
+!!$omp single
     tau26 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau26(p) = tau26(p) + ( &
@@ -1513,11 +1513,11 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau25)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau26(p) = tau26(p) + ( &
@@ -1525,9 +1525,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) + ( &
@@ -1535,9 +1535,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         Res1(p) = Res1(p) + ( &
@@ -1545,16 +1545,16 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau26)
 
     allocate(tau27(NAO, NAO))
-    !$omp single
+!!$omp single
     tau27 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1564,9 +1564,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1576,9 +1576,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1588,9 +1588,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1600,9 +1600,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1612,16 +1612,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau27)
 
     allocate(tau28(NAO, NAO))
-    !$omp single
+!!$omp single
     tau28 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1631,9 +1631,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1643,16 +1643,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau28)
 
     allocate(tau29(NAO, NAO))
-    !$omp single
+!!$omp single
     tau29 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1662,9 +1662,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1674,16 +1674,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau29)
 
     allocate(tau30(NAO, NAO))
-    !$omp single
+!!$omp single
     tau30 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1693,9 +1693,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1705,16 +1705,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau30)
 
     allocate(tau31(NAO, NAO))
-    !$omp single
+!!$omp single
     tau31 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1724,9 +1724,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1736,16 +1736,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau31)
 
     allocate(tau32(NAO, NAO))
-    !$omp single
+!!$omp single
     tau32 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1755,9 +1755,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1767,16 +1767,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau32)
 
     allocate(tau33(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau33 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -1788,14 +1788,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau34(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau34 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -1807,11 +1807,11 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau33)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -1823,14 +1823,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau35(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau35 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -1842,9 +1842,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -1856,9 +1856,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -1870,14 +1870,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau36(NAO, NAO))
-    !$omp single
+!!$omp single
     tau36 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do s=1, NAO
@@ -1889,11 +1889,11 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau34)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1903,16 +1903,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau36)
 
     allocate(tau40(NAO, NAO))
-    !$omp single
+!!$omp single
     tau40 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do s=1, NAO
@@ -1924,9 +1924,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1936,16 +1936,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau40)
 
     allocate(tau45(NAO, NAO))
-    !$omp single
+!!$omp single
     tau45 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do s=1, NAO
@@ -1957,9 +1957,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -1969,16 +1969,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau45)
 
     allocate(tau48(NAO, NAO))
-    !$omp single
+!!$omp single
     tau48 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -1988,13 +1988,13 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau24)
 
     deallocate(tau35)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2004,16 +2004,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau48)
 
     allocate(tau37(NAO, NAO))
-    !$omp single
+!!$omp single
     tau37 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2023,9 +2023,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2035,16 +2035,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau37)
 
     allocate(tau38(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau38 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -2056,9 +2056,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -2070,9 +2070,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -2084,9 +2084,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -2098,9 +2098,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -2112,9 +2112,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -2126,14 +2126,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau39(NAO, NAO))
-    !$omp single
+!!$omp single
     tau39 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2143,11 +2143,11 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau14)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2157,16 +2157,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau39)
 
     allocate(tau44(NAO, NAO))
-    !$omp single
+!!$omp single
     tau44 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2176,9 +2176,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2188,11 +2188,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau44)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2202,11 +2202,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau47)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2216,9 +2216,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2228,9 +2228,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2240,14 +2240,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau42(NAO, NAO))
-    !$omp single
+!!$omp single
     tau42 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2257,9 +2257,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2269,11 +2269,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau42)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2283,11 +2283,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau43)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2297,9 +2297,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2309,18 +2309,18 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau41)
 
     deallocate(tau38)
 
     allocate(tau49(NAO, NAO))
-    !$omp single
+!!$omp single
     tau49 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2330,14 +2330,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau57(NAO, NAO))
-    !$omp single
+!!$omp single
     tau57 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2347,16 +2347,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau49)
 
     allocate(tau50(NAO, NAO))
-    !$omp single
+!!$omp single
     tau50 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2366,9 +2366,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2378,16 +2378,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau50)
 
     allocate(tau51(NAO, NAO))
-    !$omp single
+!!$omp single
     tau51 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2397,9 +2397,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2409,16 +2409,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau51)
 
     allocate(tau52(NAO, NAO))
-    !$omp single
+!!$omp single
     tau52 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2428,9 +2428,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2440,16 +2440,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau52)
 
     allocate(tau53(NAO, NAO))
-    !$omp single
+!!$omp single
     tau53 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2459,9 +2459,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2471,16 +2471,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau53)
 
     allocate(tau54(NAO, NAO))
-    !$omp single
+!!$omp single
     tau54 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2490,9 +2490,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2502,16 +2502,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau54)
 
     allocate(tau55(NAO, NAO))
-    !$omp single
+!!$omp single
     tau55 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2521,9 +2521,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2533,16 +2533,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau55)
 
     allocate(tau56(NAO, NAO))
-    !$omp single
+!!$omp single
     tau56 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2552,9 +2552,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2564,11 +2564,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau56)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2578,16 +2578,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau57)
 
     allocate(tau60(NAO, NAO))
-    !$omp single
+!!$omp single
     tau60 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2597,14 +2597,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau62(NAO, NAO))
-    !$omp single
+!!$omp single
     tau62 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2614,14 +2614,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau64(NAO, NAO))
-    !$omp single
+!!$omp single
     tau64 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2631,16 +2631,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau60)
 
     allocate(tau61(NAO, NAO))
-    !$omp single
+!!$omp single
     tau61 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2650,9 +2650,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2662,9 +2662,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2674,11 +2674,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau61)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2688,11 +2688,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau64)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2702,14 +2702,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau63(NAO, NAO))
-    !$omp single
+!!$omp single
     tau63 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2719,11 +2719,11 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau62)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2733,11 +2733,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau63)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2747,9 +2747,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2759,9 +2759,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2771,16 +2771,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau65)
 
     allocate(tau66(NAO, NAO))
-    !$omp single
+!!$omp single
     tau66 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2790,14 +2790,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau75(NAO, NAO))
-    !$omp single
+!!$omp single
     tau75 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2807,14 +2807,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau83(NAO, NAO))
-    !$omp single
+!!$omp single
     tau83 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2824,16 +2824,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau66)
 
     allocate(tau67(NAO, NAO))
-    !$omp single
+!!$omp single
     tau67 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2843,9 +2843,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2855,14 +2855,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau85(NAO, NAO))
-    !$omp single
+!!$omp single
     tau85 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2872,16 +2872,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau67)
 
     allocate(tau68(NAO, NAO))
-    !$omp single
+!!$omp single
     tau68 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2891,9 +2891,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2903,9 +2903,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2915,16 +2915,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau68)
 
     allocate(tau69(NAO, NAO))
-    !$omp single
+!!$omp single
     tau69 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2934,9 +2934,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2946,9 +2946,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2958,16 +2958,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau69)
 
     allocate(tau70(NAO, NAO))
-    !$omp single
+!!$omp single
     tau70 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -2977,9 +2977,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -2989,9 +2989,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3001,16 +3001,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau70)
 
     allocate(tau86(NAO, NAO))
-    !$omp single
+!!$omp single
     tau86 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3020,9 +3020,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3032,11 +3032,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau85)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3046,11 +3046,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau86)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3060,9 +3060,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3072,9 +3072,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3084,9 +3084,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3096,11 +3096,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau71)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3110,9 +3110,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3122,9 +3122,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3134,9 +3134,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3146,14 +3146,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau73(NAO, NAO))
-    !$omp single
+!!$omp single
     tau73 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3163,9 +3163,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3175,9 +3175,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3187,9 +3187,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3199,9 +3199,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3211,16 +3211,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau73)
 
     allocate(tau74(NAO, NAO))
-    !$omp single
+!!$omp single
     tau74 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3230,9 +3230,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3242,9 +3242,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3254,9 +3254,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3266,14 +3266,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau84(NAO, NAO))
-    !$omp single
+!!$omp single
     tau84 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3283,11 +3283,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau74)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3297,9 +3297,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3309,11 +3309,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau75)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3323,9 +3323,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3335,9 +3335,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3347,9 +3347,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3359,16 +3359,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau76)
 
     allocate(tau77(NAO, NAO))
-    !$omp single
+!!$omp single
     tau77 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3378,9 +3378,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3390,9 +3390,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3402,16 +3402,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau77)
 
     allocate(tau78(NAO, NAO, NAO))
-    !$omp single
+!!$omp single
     tau78 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -3423,9 +3423,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
@@ -3437,14 +3437,14 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau79(NAO, NAO))
-    !$omp single
+!!$omp single
     tau79 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -3454,11 +3454,11 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau78)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3468,9 +3468,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3480,11 +3480,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau79)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau81(p) = tau81(p) + ( &
@@ -3492,9 +3492,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau81(p) = tau81(p) + ( &
@@ -3502,9 +3502,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau81(p) = tau81(p) + ( &
@@ -3512,9 +3512,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) - ( &
@@ -3522,11 +3522,11 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau81)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) + ( &
@@ -3534,9 +3534,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) + ( &
@@ -3544,9 +3544,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         tau82(p) = tau82(p) + ( &
@@ -3554,9 +3554,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3566,9 +3566,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3578,11 +3578,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau82)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3592,9 +3592,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3604,9 +3604,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3616,9 +3616,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3628,11 +3628,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau83)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3642,9 +3642,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3654,9 +3654,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3666,9 +3666,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3678,16 +3678,16 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau84)
 
     allocate(tau87(NAO, NAO))
-    !$omp single
+!!$omp single
     tau87 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3697,9 +3697,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3709,9 +3709,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3721,18 +3721,18 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau72)
 
     deallocate(tau87)
 
     allocate(tau88(NAO, NAO))
-    !$omp single
+!!$omp single
     tau88 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3742,9 +3742,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3754,9 +3754,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3766,9 +3766,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3778,11 +3778,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau88)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3792,14 +3792,14 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     allocate(tau90(NAO, NAO))
-    !$omp single
+!!$omp single
     tau90 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -3809,11 +3809,11 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau89)
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3823,9 +3823,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -3835,16 +3835,16 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau90)
 
     allocate(tau91(NAO, NAO))
-    !$omp single
+!!$omp single
     tau91 = 0.0
-    !$omp end single
+!!$omp end single
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3854,9 +3854,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3866,9 +3866,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3878,9 +3878,9 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3890,11 +3890,11 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
     deallocate(tau91)
 
-    !$omp do schedule(static) reduction(+:Ene)
+!!$omp do schedule(static) reduction(+:Ene)
     
     do q=1, NAO
         do p=1, NAO
@@ -3904,9 +3904,9 @@ Module CCRes
         end do
     end do
     
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static) reduction(+:Ene)
+!!$omp do schedule(static) reduction(+:Ene)
     
     do r=1, NAO
         do q=1, NAO
@@ -3918,9 +3918,9 @@ Module CCRes
         end do
     end do
     
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             Res1(p) = Res1(p) + ( &
@@ -3928,9 +3928,9 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
             Res1(p) = Res1(p) - ( &
@@ -3938,9 +3938,9 @@ Module CCRes
             )
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do p=1, NAO
     
         Res1(p) = Res1(p) + ( &
@@ -3948,9 +3948,9 @@ Module CCRes
         )
     
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
@@ -3960,9 +3960,9 @@ Module CCRes
             end do
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp do schedule(static)
+!!$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
@@ -3972,8 +3972,8 @@ Module CCRes
     
         end do
     end do
-    !$omp end do
+!!$omp end do
 
-    !$omp end parallel
+!!$omp end parallel
     End Subroutine CCSDT_SFS
-End Module CCRes
+End Module CCRes_SFS
