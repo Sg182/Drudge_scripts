@@ -506,7 +506,7 @@ END BLOCK
 ! Build Residuals 
     If(DoCCD) T1 = Zero ! CCD!
     If(DoCCSD) T3 = zero
-    Call CCSD_SFS(EneBrd,Res1,Res2,Res3,T1,T2,T3,NAOBrd,  &
+    Call CCSDT_SFS(EneBrd,Res1,Res2,Res3,T1,T2,T3,NAOBrd,  &
         H001Brd,H100Brd,H010Brd,H101Brd,H020Brd,H200Brd,H002Brd,H110Brd,H011Brd, &
         H030Brd,H111Brd,H120Brd,H210Brd,H021Brd,H012Brd,H201Brd,H102Brd,H003Brd,H300Brd)
     EneBrd = EneBrd + H000Brd
