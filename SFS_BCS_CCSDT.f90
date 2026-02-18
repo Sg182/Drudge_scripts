@@ -24,7 +24,6 @@
     Complex (Kind=pr), Intent(Out)   :: Ene, Res1(NAO), Res2(NAO,NAO), Res3(NAO,NAO,NAO)
     Integer                          :: p, q, r, s, i, j, k, l
     
-    
     complex(kind=pr) , dimension(:), allocatable :: tau0
 
     complex(kind=pr) , dimension(:, :), allocatable :: tau1
@@ -237,21 +236,21 @@
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau105
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau106
+    complex(kind=pr) , dimension(:, :), allocatable :: tau106
 
-    complex(kind=pr) , dimension(:, :), allocatable :: tau107
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau107
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau108
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau109
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau110
+    complex(kind=pr) , dimension(:, :), allocatable :: tau110
 
-    complex(kind=pr) , dimension(:, :), allocatable :: tau111
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau111
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau112
+    complex(kind=pr) , dimension(:, :), allocatable :: tau112
 
-    complex(kind=pr) , dimension(:, :), allocatable :: tau113
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau113
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau114
 
@@ -275,11 +274,11 @@
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau124
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau125
+    complex(kind=pr) , dimension(:, :), allocatable :: tau125
 
     complex(kind=pr) , dimension(:, :), allocatable :: tau126
 
-    complex(kind=pr) , dimension(:, :), allocatable :: tau127
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau127
 
     complex(kind=pr) , dimension(:, :), allocatable :: tau128
 
@@ -303,19 +302,19 @@
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau138
 
-    complex(kind=pr) , dimension(:, :), allocatable :: tau139
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau139
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau140
+    complex(kind=pr) , dimension(:, :), allocatable :: tau140
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau141
+    complex(kind=pr) , dimension(:, :), allocatable :: tau141
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau142
 
     complex(kind=pr) , dimension(:, :, :), allocatable :: tau143
 
-    complex(kind=pr) , dimension(:, :), allocatable :: tau144
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau144
 
-    complex(kind=pr) , dimension(:, :), allocatable :: tau145
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau145
 
     complex(kind=pr) , dimension(:, :), allocatable :: tau146
 
@@ -323,13 +322,17 @@
 
     complex(kind=pr) , dimension(:, :), allocatable :: tau148
 
-    complex(kind=pr) , dimension(:), allocatable :: tau149
+    complex(kind=pr) , dimension(:, :), allocatable :: tau149
 
     complex(kind=pr) , dimension(:, :), allocatable :: tau150
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau151
+    complex(kind=pr) , dimension(:), allocatable :: tau151
 
-    complex(kind=pr) , dimension(:, :, :), allocatable :: tau152
+    complex(kind=pr) , dimension(:, :), allocatable :: tau152
+
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau153
+
+    complex(kind=pr) , dimension(:, :, :), allocatable :: tau154
 
     !$omp parallel default(shared)
 
@@ -736,15 +739,15 @@
     end do
     !$omp end do
 
-    allocate(tau149(NAO))
+    allocate(tau151(NAO))
     !$omp single
-    tau149 = 0.0
+    tau151 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau149(p) = tau149(p) - ( &
+        tau151(p) = tau151(p) - ( &
             tau14(p)&
         )
     
@@ -839,7 +842,7 @@
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau149(p) = tau149(p) - ( &
+        tau151(p) = tau151(p) - ( &
             tau13(p)&
         )
     
@@ -906,9 +909,9 @@
     end do
     !$omp end do
 
-    allocate(tau109(NAO, NAO, NAO))
+    allocate(tau105(NAO, NAO, NAO))
     !$omp single
-    tau109 = 0.0
+    tau105 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -916,7 +919,26 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau109(p, q, r) = tau109(p, q, r) + ( &
+                tau105(p, q, r) = tau105(p, q, r) + ( &
+                    2 * t2(r, p) * tau7(q, p)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    allocate(tau108(NAO, NAO, NAO))
+    !$omp single
+    tau108 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau108(p, q, r) = tau108(p, q, r) + ( &
                     t1(q) * tau7(r, p)&
                 )
     
@@ -925,9 +947,9 @@
     end do
     !$omp end do
 
-    allocate(tau117(NAO, NAO, NAO))
+    allocate(tau116(NAO, NAO, NAO))
     !$omp single
-    tau117 = 0.0
+    tau116 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -935,7 +957,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau117(p, q, r) = tau117(p, q, r) + ( &
+                tau116(p, q, r) = tau116(p, q, r) + ( &
                     t1(p)**2 * tau7(r, q)&
                 )
     
@@ -944,9 +966,9 @@
     end do
     !$omp end do
 
-    allocate(tau119(NAO, NAO, NAO))
+    allocate(tau118(NAO, NAO, NAO))
     !$omp single
-    tau119 = 0.0
+    tau118 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -954,7 +976,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau119(p, q, r) = tau119(p, q, r) + ( &
+                tau118(p, q, r) = tau118(p, q, r) + ( &
                     t1(p)**2 * tau7(r, q)&
                 )
     
@@ -1180,7 +1202,7 @@
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau149(p) = tau149(p) + ( &
+        tau151(p) = tau151(p) + ( &
             3 * tau10(p)&
         )
     
@@ -1241,7 +1263,7 @@
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau149(p) = tau149(p) + ( &
+        tau151(p) = tau151(p) + ( &
             2 * tau12(p)&
         )
     
@@ -1284,16 +1306,16 @@
     end do
     !$omp end do
 
-    allocate(tau147(NAO, NAO))
+    allocate(tau149(NAO, NAO))
     !$omp single
-    tau147 = 0.0
+    tau149 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) + ( &
+            tau149(p, q) = tau149(p, q) + ( &
                 2 * tau28(p, q)&
             )
     
@@ -1301,16 +1323,16 @@
     end do
     !$omp end do
 
-    allocate(tau148(NAO, NAO))
+    allocate(tau150(NAO, NAO))
     !$omp single
-    tau148 = 0.0
+    tau150 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau148(p, q) = tau148(p, q) + ( &
+            tau150(p, q) = tau150(p, q) + ( &
                 2 * tau28(p, q)&
             )
     
@@ -1354,16 +1376,16 @@
     end do
     !$omp end do
 
-    allocate(tau145(NAO, NAO))
+    allocate(tau147(NAO, NAO))
     !$omp single
-    tau145 = 0.0
+    tau147 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau145(p, q) = tau145(p, q) + ( &
+            tau147(p, q) = tau147(p, q) + ( &
                 2 * tau36(p, q)&
             )
     
@@ -1371,16 +1393,16 @@
     end do
     !$omp end do
 
-    allocate(tau150(NAO, NAO))
+    allocate(tau152(NAO, NAO))
     !$omp single
-    tau150 = 0.0
+    tau152 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau150(p, q) = tau150(p, q) + ( &
+            tau152(p, q) = tau152(p, q) + ( &
                 2 * tau36(q, p)&
             )
     
@@ -1430,16 +1452,16 @@
 
     deallocate(tau83)
 
-    allocate(tau144(NAO, NAO))
+    allocate(tau146(NAO, NAO))
     !$omp single
-    tau144 = 0.0
+    tau146 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
             do r=1, NAO
-                tau144(p, q) = tau144(p, q) + ( &
+                tau146(p, q) = tau146(p, q) + ( &
                     tau11(r, q) * t3(r, p, q)&
                 )
             end do
@@ -1449,24 +1471,24 @@
 
     deallocate(tau11)
 
-    allocate(tau146(NAO, NAO))
+    allocate(tau148(NAO, NAO))
     !$omp single
-    tau146 = 0.0
+    tau148 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) + ( &
-                2 * tau144(p, q)&
+            tau148(p, q) = tau148(p, q) + ( &
+                2 * tau146(p, q)&
             )
     
         end do
     end do
     !$omp end do
 
-    deallocate(tau144)
+    deallocate(tau146)
 
     !$omp do schedule(static)
     do p=1, NAO
@@ -1544,7 +1566,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) + ( &
+            tau148(p, q) = tau148(p, q) + ( &
                 tau18(q) * t2(q, p)&
             )
     
@@ -1556,7 +1578,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) + ( &
+            tau149(p, q) = tau149(p, q) + ( &
                 tau18(p) * t2(q, p)&
             )
     
@@ -1567,7 +1589,7 @@
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau149(p) = tau149(p) + ( &
+        tau151(p) = tau151(p) + ( &
             t1(p) * tau18(p)&
         )
     
@@ -1811,7 +1833,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) + ( &
+            tau148(p, q) = tau148(p, q) + ( &
                 2 * tau25(q, p)&
             )
     
@@ -1823,7 +1845,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) + ( &
+            tau149(p, q) = tau149(p, q) + ( &
                 2 * tau25(p, q)&
             )
     
@@ -1835,7 +1857,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau148(p, q) = tau148(p, q) + ( &
+            tau150(p, q) = tau150(p, q) + ( &
                 2 * tau25(p, q)&
             )
     
@@ -1878,7 +1900,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) - ( &
+            tau148(p, q) = tau148(p, q) - ( &
                 4 * tau26(p, q)&
             )
     
@@ -1890,7 +1912,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) - ( &
+            tau149(p, q) = tau149(p, q) - ( &
                 4 * tau26(q, p)&
             )
     
@@ -1902,7 +1924,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau148(p, q) = tau148(p, q) - ( &
+            tau150(p, q) = tau150(p, q) - ( &
                 4 * tau26(q, p)&
             )
     
@@ -1954,7 +1976,7 @@
             do p=1, NAO
     
                 tau100(p, q, r) = tau100(p, q, r) - ( &
-                    t2(q, p) * tau27(p, r)&
+                    t2(p, q) * tau27(p, r)&
                 )
     
             end do
@@ -2273,7 +2295,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) - ( &
+            tau148(p, q) = tau148(p, q) - ( &
                 tau32(p, q)&
             )
     
@@ -2285,7 +2307,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) - ( &
+            tau149(p, q) = tau149(p, q) - ( &
                 tau32(q, p)&
             )
     
@@ -2297,7 +2319,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau148(p, q) = tau148(p, q) - ( &
+            tau150(p, q) = tau150(p, q) - ( &
                 tau32(q, p)&
             )
     
@@ -2435,7 +2457,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau145(p, q) = tau145(p, q) - ( &
+            tau147(p, q) = tau147(p, q) - ( &
                 6 * tau34(p, q)&
             )
     
@@ -2447,7 +2469,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau150(p, q) = tau150(p, q) - ( &
+            tau152(p, q) = tau152(p, q) - ( &
                 6 * tau34(q, p)&
             )
     
@@ -2639,7 +2661,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau145(p, q) = tau145(p, q) + ( &
+            tau147(p, q) = tau147(p, q) + ( &
                 2 * tau38(p, q)&
             )
     
@@ -2651,7 +2673,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau150(p, q) = tau150(p, q) + ( &
+            tau152(p, q) = tau152(p, q) + ( &
                 2 * tau38(q, p)&
             )
     
@@ -2732,7 +2754,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau145(p, q) = tau145(p, q) + ( &
+            tau147(p, q) = tau147(p, q) + ( &
                 4 * tau39(p, q)&
             )
     
@@ -2744,7 +2766,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau150(p, q) = tau150(p, q) + ( &
+            tau152(p, q) = tau152(p, q) + ( &
                 4 * tau39(q, p)&
             )
     
@@ -2837,7 +2859,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) + ( &
+            tau148(p, q) = tau148(p, q) + ( &
                 4 * tau44(p, q)&
             )
     
@@ -2849,7 +2871,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) + ( &
+            tau149(p, q) = tau149(p, q) + ( &
                 4 * tau44(q, p)&
             )
     
@@ -2861,7 +2883,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau148(p, q) = tau148(p, q) + ( &
+            tau150(p, q) = tau150(p, q) + ( &
                 4 * tau44(q, p)&
             )
     
@@ -2904,7 +2926,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) + ( &
+            tau148(p, q) = tau148(p, q) + ( &
                 2 * tau45(p, q)&
             )
     
@@ -2916,7 +2938,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) + ( &
+            tau149(p, q) = tau149(p, q) + ( &
                 2 * tau45(q, p)&
             )
     
@@ -2928,7 +2950,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau148(p, q) = tau148(p, q) + ( &
+            tau150(p, q) = tau150(p, q) + ( &
                 2 * tau45(q, p)&
             )
     
@@ -2985,7 +3007,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) - ( &
+            tau148(p, q) = tau148(p, q) - ( &
                 tau46(p, q)&
             )
     
@@ -2997,7 +3019,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau147(p, q) = tau147(p, q) - ( &
+            tau149(p, q) = tau149(p, q) - ( &
                 tau46(q, p)&
             )
     
@@ -3009,7 +3031,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau148(p, q) = tau148(p, q) - ( &
+            tau150(p, q) = tau150(p, q) - ( &
                 tau46(q, p)&
             )
     
@@ -3111,9 +3133,9 @@
 
     deallocate(tau84)
 
-    allocate(tau152(NAO, NAO, NAO))
+    allocate(tau154(NAO, NAO, NAO))
     !$omp single
-    tau152 = 0.0
+    tau154 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -3121,7 +3143,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau152(p, q, r) = tau152(p, q, r) + ( &
+                tau154(p, q, r) = tau154(p, q, r) + ( &
                     6 * tau82(p, r, q)&
                 )
     
@@ -3207,7 +3229,7 @@
         do p=1, NAO
     
             tau52(p, q) = tau52(p, q) - ( &
-                8 * t2(q, p)**2 * H012(p, p, q)&
+                8 * t2(p, q)**2 * H012(p, p, q)&
             )
     
         end do
@@ -3303,16 +3325,16 @@
     end do
     !$omp end do
 
-    allocate(tau127(NAO, NAO))
+    allocate(tau126(NAO, NAO))
     !$omp single
-    tau127 = 0.0
+    tau126 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau127(p, q) = tau127(p, q) + ( &
+            tau126(p, q) = tau126(p, q) + ( &
                 3 * tau53(q, p)&
             )
     
@@ -3401,7 +3423,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau127(p, q) = tau127(p, q) + ( &
+            tau126(p, q) = tau126(p, q) + ( &
                 tau54(q, p)&
             )
     
@@ -3498,7 +3520,7 @@
         do p=1, NAO
     
             Res2(p, q) = Res2(p, q) - ( &
-                8 * t1(p) * t1(q) * tau66(p, q)&
+                8 * t1(p) * t1(q) * tau66(q, p)&
             )
     
         end do
@@ -3507,16 +3529,16 @@
 
     deallocate(tau66)
 
-    allocate(tau126(NAO, NAO))
+    allocate(tau125(NAO, NAO))
     !$omp single
-    tau126 = 0.0
+    tau125 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau126(p, q) = tau126(p, q) - ( &
+            tau125(p, q) = tau125(p, q) - ( &
                 tau55(p, q)&
             )
     
@@ -3670,6 +3692,25 @@
     end do
     !$omp end do
 
+    allocate(tau121(NAO, NAO, NAO))
+    !$omp single
+    tau121 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau121(p, q, r) = tau121(p, q, r) + ( &
+                    2 * tau57(q, p) * t3(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
     allocate(tau122(NAO, NAO, NAO))
     !$omp single
     tau122 = 0.0
@@ -3680,26 +3721,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau122(p, q, r) = tau122(p, q, r) + ( &
-                    2 * tau57(q, p) * t3(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    allocate(tau123(NAO, NAO, NAO))
-    !$omp single
-    tau123 = 0.0
-    !$omp end single
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau123(p, q, r) = tau123(p, q, r) - ( &
+                tau122(p, q, r) = tau122(p, q, r) - ( &
                     2 * tau57(q, p) * t3(r, p, q)&
                 )
     
@@ -3712,7 +3734,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau127(p, q) = tau127(p, q) + ( &
+            tau126(p, q) = tau126(p, q) + ( &
                 t2(q, p) * tau57(q, p)&
             )
     
@@ -4020,7 +4042,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau122(p, q, r) = tau122(p, q, r) - ( &
+                tau121(p, q, r) = tau121(p, q, r) - ( &
                     t2(r, q) * tau62(p, q)&
                 )
     
@@ -4034,7 +4056,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau122(p, q, r) = tau122(p, q, r) - ( &
+                tau121(p, q, r) = tau121(p, q, r) - ( &
                     t2(r, p) * tau62(q, p)&
                 )
     
@@ -4048,7 +4070,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau123(p, q, r) = tau123(p, q, r) + ( &
+                tau122(p, q, r) = tau122(p, q, r) + ( &
                     t2(r, q) * tau62(p, q)&
                 )
     
@@ -4062,7 +4084,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau123(p, q, r) = tau123(p, q, r) + ( &
+                tau122(p, q, r) = tau122(p, q, r) + ( &
                     t2(r, p) * tau62(q, p)&
                 )
     
@@ -4258,9 +4280,9 @@
     end do
     !$omp end do
 
-    allocate(tau108(NAO, NAO, NAO))
+    allocate(tau107(NAO, NAO, NAO))
     !$omp single
-    tau108 = 0.0
+    tau107 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -4268,7 +4290,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
+                tau107(p, q, r) = tau107(p, q, r) + ( &
                     2 * t1(p)**2 * t1(r) * tau68(q, r)&
                 )
     
@@ -4277,9 +4299,9 @@
     end do
     !$omp end do
 
-    allocate(tau125(NAO, NAO, NAO))
+    allocate(tau124(NAO, NAO, NAO))
     !$omp single
-    tau125 = 0.0
+    tau124 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -4287,11 +4309,28 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau125(p, q, r) = tau125(p, q, r) + ( &
+                tau124(p, q, r) = tau124(p, q, r) + ( &
                     t1(p)**2 * tau68(r, q)&
                 )
     
             end do
+        end do
+    end do
+    !$omp end do
+
+    allocate(tau140(NAO, NAO))
+    !$omp single
+    tau140 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau140(p, q) = tau140(p, q) + ( &
+                2 * t1(p) * tau68(q, p)&
+            )
+    
         end do
     end do
     !$omp end do
@@ -4699,9 +4738,9 @@
     end do
     !$omp end do
 
-    allocate(tau138(NAO, NAO, NAO))
+    allocate(tau139(NAO, NAO, NAO))
     !$omp single
-    tau138 = 0.0
+    tau139 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -4709,27 +4748,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau138(p, q, r) = tau138(p, q, r) + ( &
+                tau139(p, q, r) = tau139(p, q, r) + ( &
                     2 * tau78(q, r, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    allocate(tau140(NAO, NAO, NAO))
-    !$omp single
-    tau140 = 0.0
-    !$omp end single
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau140(p, q, r) = tau140(p, q, r) + ( &
-                    2 * tau78(p, q, r)&
                 )
     
             end do
@@ -4748,6 +4768,25 @@
             do p=1, NAO
     
                 tau142(p, q, r) = tau142(p, q, r) + ( &
+                    2 * tau78(p, q, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    allocate(tau144(NAO, NAO, NAO))
+    !$omp single
+    tau144 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau144(p, q, r) = tau144(p, q, r) + ( &
                     2 * tau78(p, q, r)&
                 )
     
@@ -5157,7 +5196,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau138(p, q, r) = tau138(p, q, r) - ( &
+                tau139(p, q, r) = tau139(p, q, r) - ( &
                     6 * tau92(q, r, p)&
                 )
     
@@ -5171,7 +5210,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau140(p, q, r) = tau140(p, q, r) - ( &
+                tau142(p, q, r) = tau142(p, q, r) - ( &
                     6 * tau92(p, q, r)&
                 )
     
@@ -5520,7 +5559,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
+                tau107(p, q, r) = tau107(p, q, r) + ( &
                     8 * t3(r, p, q) * tau102(r, p, q)&
                 )
     
@@ -5556,7 +5595,7 @@
             do p=1, NAO
     
                 tau103(p, q, r) = tau103(p, q, r) + ( &
-                    t1(r) * t2(q, p)&
+                    t1(q) * t2(r, p)&
                 )
     
             end do
@@ -5569,8 +5608,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
-                    8 * t1(q) * t2(r, p) * tau103(r, q, p)&
+                tau107(p, q, r) = tau107(p, q, r) + ( &
+                    8 * t1(p) * t2(r, q) * tau103(r, q, p)&
                 )
     
             end do
@@ -5578,9 +5617,9 @@
     end do
     !$omp end do
 
-    allocate(tau124(NAO, NAO, NAO))
+    allocate(tau123(NAO, NAO, NAO))
     !$omp single
-    tau124 = 0.0
+    tau123 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -5588,8 +5627,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau124(p, q, r) = tau124(p, q, r) + ( &
-                    4 * t2(r, p) * tau103(r, q, p)&
+                tau123(p, q, r) = tau123(p, q, r) + ( &
+                    4 * t2(r, p) * tau103(p, r, q)&
                 )
     
             end do
@@ -5602,14 +5641,16 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau125(p, q, r) = tau125(p, q, r) + ( &
-                    4 * t2(r, p) * tau103(r, q, p)&
+                tau124(p, q, r) = tau124(p, q, r) + ( &
+                    4 * t2(r, p) * tau103(p, r, q)&
                 )
     
             end do
         end do
     end do
     !$omp end do
+
+    deallocate(tau103)
 
     allocate(tau104(NAO, NAO))
     !$omp single
@@ -5640,11 +5681,6 @@
     end do
     !$omp end do
 
-    allocate(tau105(NAO, NAO, NAO))
-    !$omp single
-    tau105 = 0.0
-    !$omp end single
-
     !$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
@@ -5659,18 +5695,13 @@
     end do
     !$omp end do
 
-    allocate(tau106(NAO, NAO, NAO))
-    !$omp single
-    tau106 = 0.0
-    !$omp end single
-
     !$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
     
-                tau106(p, q, r) = tau106(p, q, r) + ( &
-                    t1(p) * tau104(q, r)&
+                tau107(p, q, r) = tau107(p, q, r) + ( &
+                    4 * t1(q) * t2(q, p) * tau104(r, p)&
                 )
     
             end do
@@ -5683,7 +5714,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
+                tau107(p, q, r) = tau107(p, q, r) + ( &
                     2 * tau104(q, p) * t3(r, r, p)&
                 )
     
@@ -5692,9 +5723,9 @@
     end do
     !$omp end do
 
-    allocate(tau118(NAO, NAO, NAO))
+    allocate(tau117(NAO, NAO, NAO))
     !$omp single
-    tau118 = 0.0
+    tau117 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -5702,8 +5733,22 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau118(p, q, r) = tau118(p, q, r) + ( &
+                tau117(p, q, r) = tau117(p, q, r) + ( &
                     t1(q) * tau104(p, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau123(p, q, r) = tau123(p, q, r) + ( &
+                    2 * t2(q, p) * tau104(r, p)&
                 )
     
             end do
@@ -5730,22 +5775,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau125(p, q, r) = tau125(p, q, r) + ( &
-                    2 * t2(q, p) * tau104(r, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau57(r, p) * tau125(p, q, r)&
+                    2 * tau57(r, p) * tau124(p, q, r)&
                 )
     
             end do
@@ -5753,7 +5784,7 @@
     end do
     !$omp end do
 
-    deallocate(tau125)
+    deallocate(tau124)
 
     !$omp do schedule(static)
     do r=1, NAO
@@ -5774,21 +5805,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau105(p, q, r) = tau105(p, q, r) + ( &
-                    2 * t2(p, q) * t2(p, r)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau108(p, q, r) = tau108(p, q, r) + ( &
+                tau107(p, q, r) = tau107(p, q, r) + ( &
                     4 * t2(r, p) * tau105(q, r, p)&
                 )
     
@@ -5799,46 +5816,16 @@
 
     deallocate(tau105)
 
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau106(p, q, r) = tau106(p, q, r) + ( &
-                    2 * t1(q) * t1(r) * t2(p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau108(p, q, r) = tau108(p, q, r) + ( &
-                    4 * t2(q, p) * tau106(q, r, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau106)
-
-    allocate(tau107(NAO, NAO))
+    allocate(tau106(NAO, NAO))
     !$omp single
-    tau107 = 0.0
+    tau106 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau107(p, q) = tau107(p, q) + ( &
+            tau106(p, q) = tau106(p, q) + ( &
                 2 * t1(p) * t3(q, q, p)&
             )
     
@@ -5850,7 +5837,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau107(p, q) = tau107(p, q) + ( &
+            tau106(p, q) = tau106(p, q) + ( &
                 2 * t2(q, p)**2&
             )
     
@@ -5862,7 +5849,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau107(p, q) = tau107(p, q) + ( &
+            tau106(p, q) = tau106(p, q) + ( &
                 t1(p)**2 * t1(q)**2&
             )
     
@@ -5875,8 +5862,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
-                    t1(r)**2 * tau107(p, q)&
+                tau107(p, q, r) = tau107(p, q, r) + ( &
+                    t1(r)**2 * tau106(p, q)&
                 )
     
             end do
@@ -5889,7 +5876,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
+                tau107(p, q, r) = tau107(p, q, r) + ( &
                     4 * t3(r, p, q)**2&
                 )
     
@@ -5903,7 +5890,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
+                tau107(p, q, r) = tau107(p, q, r) + ( &
                     2 * t1(p)**2 * t2(r, q)**2&
                 )
     
@@ -5917,7 +5904,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau108(p, q, r) = tau108(p, q, r) + ( &
+                tau107(p, q, r) = tau107(p, q, r) + ( &
                     2 * t1(q)**2 * t2(r, p)**2&
                 )
     
@@ -5932,7 +5919,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    6 * H003(r, p, q) * tau108(p, r, q)&
+                    6 * H003(r, p, q) * tau107(p, r, q)&
                 )
     
             end do
@@ -5940,14 +5927,14 @@
     end do
     !$omp end do
 
-    deallocate(tau108)
+    deallocate(tau107)
 
     !$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
     
-                tau109(p, q, r) = tau109(p, q, r) + ( &
+                tau108(p, q, r) = tau108(p, q, r) + ( &
                     t3(r, p, q)&
                 )
     
@@ -5961,7 +5948,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau109(p, q, r) = tau109(p, q, r) + ( &
+                tau108(p, q, r) = tau108(p, q, r) + ( &
                     t1(r) * t2(q, p)&
                 )
     
@@ -5970,9 +5957,9 @@
     end do
     !$omp end do
 
-    allocate(tau112(NAO, NAO, NAO))
+    allocate(tau111(NAO, NAO, NAO))
     !$omp single
-    tau112 = 0.0
+    tau111 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -5980,8 +5967,27 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau112(p, q, r) = tau112(p, q, r) + ( &
-                    4 * t2(q, p) * tau109(r, p, q)&
+                tau111(p, q, r) = tau111(p, q, r) + ( &
+                    4 * t2(q, p) * tau108(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    allocate(tau113(NAO, NAO, NAO))
+    !$omp single
+    tau113 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau113(p, q, r) = tau113(p, q, r) + ( &
+                    4 * t2(q, p) * tau108(r, p, q)&
                 )
     
             end do
@@ -6000,7 +6006,7 @@
             do p=1, NAO
     
                 tau114(p, q, r) = tau114(p, q, r) + ( &
-                    4 * t2(q, p) * tau109(r, p, q)&
+                    4 * t2(q, p) * tau108(r, p, q)&
                 )
     
             end do
@@ -6008,9 +6014,11 @@
     end do
     !$omp end do
 
-    allocate(tau115(NAO, NAO, NAO))
+    deallocate(tau108)
+
+    allocate(tau109(NAO, NAO, NAO))
     !$omp single
-    tau115 = 0.0
+    tau109 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -6018,28 +6026,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau115(p, q, r) = tau115(p, q, r) + ( &
-                    4 * t2(q, p) * tau109(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau109)
-
-    allocate(tau110(NAO, NAO, NAO))
-    !$omp single
-    tau110 = 0.0
-    !$omp end single
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau110(p, q, r) = tau110(p, q, r) + ( &
+                tau109(p, q, r) = tau109(p, q, r) + ( &
                     t1(q) * t3(p, p, r)&
                 )
     
@@ -6053,7 +6040,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau110(p, q, r) = tau110(p, q, r) + ( &
+                tau109(p, q, r) = tau109(p, q, r) + ( &
                     2 * t1(p) * t3(r, p, q)&
                 )
     
@@ -6067,7 +6054,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau110(p, q, r) = tau110(p, q, r) + ( &
+                tau109(p, q, r) = tau109(p, q, r) + ( &
                     t1(p)**2 * t2(r, q)&
                 )
     
@@ -6081,8 +6068,22 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau112(p, q, r) = tau112(p, q, r) + ( &
-                    2 * t1(q) * tau110(p, r, q)&
+                tau111(p, q, r) = tau111(p, q, r) + ( &
+                    2 * t1(q) * tau109(p, r, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau113(p, q, r) = tau113(p, q, r) + ( &
+                    2 * t1(q) * tau109(p, r, q)&
                 )
     
             end do
@@ -6096,21 +6097,7 @@
             do p=1, NAO
     
                 tau114(p, q, r) = tau114(p, q, r) + ( &
-                    2 * t1(q) * tau110(p, r, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau115(p, q, r) = tau115(p, q, r) + ( &
-                    2 * t1(q) * tau110(p, r, q)&
+                    2 * t1(q) * tau109(p, r, q)&
                 )
     
             end do
@@ -6124,7 +6111,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * tau62(q, r) * tau110(r, q, p)&
+                    2 * tau62(q, r) * tau109(r, q, p)&
                 )
     
             end do
@@ -6138,7 +6125,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * tau62(r, q) * tau110(q, r, p)&
+                    2 * tau62(r, q) * tau109(q, r, p)&
                 )
     
             end do
@@ -6146,18 +6133,18 @@
     end do
     !$omp end do
 
-    deallocate(tau110)
+    deallocate(tau109)
 
-    allocate(tau111(NAO, NAO))
+    allocate(tau110(NAO, NAO))
     !$omp single
-    tau111 = 0.0
+    tau110 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau111(p, q) = tau111(p, q) + ( &
+            tau110(p, q) = tau110(p, q) + ( &
                 2 * t2(q, p)**2&
             )
     
@@ -6169,7 +6156,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau111(p, q) = tau111(p, q) + ( &
+            tau110(p, q) = tau110(p, q) + ( &
                 t1(p)**2 * t1(q)**2&
             )
     
@@ -6182,8 +6169,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau112(p, q, r) = tau112(p, q, r) + ( &
-                    t1(r) * tau111(q, p)&
+                tau111(p, q, r) = tau111(p, q, r) + ( &
+                    t1(r) * tau110(q, p)&
                 )
     
             end do
@@ -6196,8 +6183,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau115(p, q, r) = tau115(p, q, r) + ( &
-                    t1(r) * tau111(q, p)&
+                tau114(p, q, r) = tau114(p, q, r) + ( &
+                    t1(r) * tau110(q, p)&
                 )
     
             end do
@@ -6210,7 +6197,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau112(p, q, r) = tau112(p, q, r) + ( &
+                tau111(p, q, r) = tau111(p, q, r) + ( &
                     2 * t2(r, q) * t3(p, p, q)&
                 )
     
@@ -6224,7 +6211,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau112(p, q, r) = tau112(p, q, r) + ( &
+                tau111(p, q, r) = tau111(p, q, r) + ( &
                     2 * t1(q)**2 * t1(p) * t2(r, p)&
                 )
     
@@ -6238,7 +6225,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau112(p, q, r) = tau112(p, q, r) + ( &
+                tau111(p, q, r) = tau111(p, q, r) + ( &
                     t1(p)**2 * t3(q, q, r)&
                 )
     
@@ -6252,7 +6239,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau112(p, q, r) = tau112(p, q, r) + ( &
+                tau111(p, q, r) = tau111(p, q, r) + ( &
                     t1(q)**2 * t3(p, p, r)&
                 )
     
@@ -6267,7 +6254,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    4 * H012(p, r, q) * tau112(r, q, p)&
+                    4 * H012(p, r, q) * tau111(r, q, p)&
                 )
     
             end do
@@ -6275,18 +6262,18 @@
     end do
     !$omp end do
 
-    deallocate(tau112)
+    deallocate(tau111)
 
-    allocate(tau113(NAO, NAO))
+    allocate(tau112(NAO, NAO))
     !$omp single
-    tau113 = 0.0
+    tau112 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau113(p, q) = tau113(p, q) + ( &
+            tau112(p, q) = tau112(p, q) + ( &
                 t3(p, p, q)&
             )
     
@@ -6298,7 +6285,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau113(p, q) = tau113(p, q) + ( &
+            tau112(p, q) = tau112(p, q) + ( &
                 2 * t1(p) * t2(q, p)&
             )
     
@@ -6310,7 +6297,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau113(p, q) = tau113(p, q) + ( &
+            tau112(p, q) = tau112(p, q) + ( &
                 t1(p)**2 * t1(q)&
             )
     
@@ -6323,8 +6310,50 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau114(p, q, r) = tau114(p, q, r) + ( &
-                    t1(q)**2 * tau113(p, r)&
+                tau113(p, q, r) = tau113(p, q, r) + ( &
+                    t1(q)**2 * tau112(p, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau113(p, q, r) = tau113(p, q, r) + ( &
+                    2 * t2(r, q) * t3(p, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau113(p, q, r) = tau113(p, q, r) + ( &
+                    2 * t2(q, p)**2 * t1(r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) + ( &
+                    4 * H012(q, r, p) * tau113(r, p, q)&
                 )
     
             end do
@@ -6354,50 +6383,6 @@
             do p=1, NAO
     
                 tau114(p, q, r) = tau114(p, q, r) + ( &
-                    2 * t2(q, p)**2 * t1(r)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    4 * H012(q, r, p) * tau114(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau114)
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau115(p, q, r) = tau115(p, q, r) + ( &
-                    2 * t2(r, q) * t3(p, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau115(p, q, r) = tau115(p, q, r) + ( &
                     2 * t1(q)**2 * t1(p) * t2(r, p)&
                 )
     
@@ -6412,7 +6397,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    4 * H012(r, q, p) * tau115(q, p, r)&
+                    4 * H012(r, q, p) * tau114(q, p, r)&
                 )
     
             end do
@@ -6420,11 +6405,11 @@
     end do
     !$omp end do
 
-    deallocate(tau115)
+    deallocate(tau114)
 
-    allocate(tau116(NAO, NAO, NAO))
+    allocate(tau115(NAO, NAO, NAO))
     !$omp single
-    tau116 = 0.0
+    tau115 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -6432,7 +6417,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau116(p, q, r) = tau116(p, q, r) + ( &
+                tau115(p, q, r) = tau115(p, q, r) + ( &
                     t3(r, p, q)&
                 )
     
@@ -6446,7 +6431,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau116(p, q, r) = tau116(p, q, r) + ( &
+                tau115(p, q, r) = tau115(p, q, r) + ( &
                     t1(p) * t2(r, q)&
                 )
     
@@ -6460,7 +6445,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau116(p, q, r) = tau116(p, q, r) + ( &
+                tau115(p, q, r) = tau115(p, q, r) + ( &
                     t1(r) * t2(q, p)&
                 )
     
@@ -6474,8 +6459,22 @@
         do q=1, NAO
             do p=1, NAO
     
+                tau116(p, q, r) = tau116(p, q, r) + ( &
+                    2 * t1(p) * tau115(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
                 tau117(p, q, r) = tau117(p, q, r) + ( &
-                    2 * t1(p) * tau116(r, p, q)&
+                    2 * t1(p) * tau115(r, p, q)&
                 )
     
             end do
@@ -6489,7 +6488,7 @@
             do p=1, NAO
     
                 tau118(p, q, r) = tau118(p, q, r) + ( &
-                    2 * t1(p) * tau116(r, p, q)&
+                    2 * t1(p) * tau115(r, p, q)&
                 )
     
             end do
@@ -6502,8 +6501,66 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau119(p, q, r) = tau119(p, q, r) + ( &
-                    2 * t1(p) * tau116(r, p, q)&
+                tau116(p, q, r) = tau116(p, q, r) + ( &
+                    2 * t2(p, q) * t2(p, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau116(p, q, r) = tau116(p, q, r) + ( &
+                    t1(q) * t3(p, p, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau116(p, q, r) = tau116(p, q, r) + ( &
+                    t1(r) * t3(p, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    8 * H021(q, p, r) * tau116(r, q, p)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau116)
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau117(p, q, r) = tau117(p, q, r) + ( &
+                    t1(p)**2 * t2(r, q)&
                 )
     
             end do
@@ -6530,36 +6587,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau117(p, q, r) = tau117(p, q, r) + ( &
-                    t1(q) * t3(p, p, r)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau117(p, q, r) = tau117(p, q, r) + ( &
-                    t1(r) * t3(p, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    8 * H021(q, p, r) * tau117(r, q, p)&
+                    8 * H021(r, p, q) * tau117(q, r, p)&
                 )
     
             end do
@@ -6575,20 +6604,6 @@
             do p=1, NAO
     
                 tau118(p, q, r) = tau118(p, q, r) + ( &
-                    t1(p)**2 * t2(r, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau118(p, q, r) = tau118(p, q, r) + ( &
                     2 * t2(p, q) * t2(p, r)&
                 )
     
@@ -6603,7 +6618,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    8 * H021(r, p, q) * tau118(q, r, p)&
+                    8 * H021(r, q, p) * tau118(p, r, q)&
                 )
     
             end do
@@ -6613,13 +6628,32 @@
 
     deallocate(tau118)
 
+    allocate(tau119(NAO, NAO, NAO))
+    !$omp single
+    tau119 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+                do s=1, NAO
+                    tau119(p, q, r) = tau119(p, q, r) + ( &
+                        t2(r, s) * H021(p, q, s)&
+                    )
+                end do
+            end do
+        end do
+    end do
+    !$omp end do
+
     !$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
     
-                tau119(p, q, r) = tau119(p, q, r) + ( &
-                    2 * t2(p, q) * t2(p, r)&
+                tau121(p, q, r) = tau121(p, q, r) + ( &
+                    2 * tau119(q, p, r)&
                 )
     
             end do
@@ -6632,8 +6666,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    8 * H021(r, q, p) * tau119(p, r, q)&
+                tau122(p, q, r) = tau122(p, q, r) - ( &
+                    2 * tau119(q, p, r)&
                 )
     
             end do
@@ -6654,9 +6688,51 @@
             do p=1, NAO
                 do s=1, NAO
                     tau120(p, q, r) = tau120(p, q, r) + ( &
-                        t2(r, s) * H021(p, q, s)&
+                        H012(p, q, s) * t3(r, s, q)&
                     )
                 end do
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau121(p, q, r) = tau121(p, q, r) - ( &
+                    2 * tau120(p, q, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau121(p, q, r) = tau121(p, q, r) - ( &
+                    2 * tau120(q, p, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau122(p, q, r) = tau122(p, q, r) + ( &
+                    2 * tau120(p, q, r)&
+                )
+    
             end do
         end do
     end do
@@ -6676,48 +6752,15 @@
     end do
     !$omp end do
 
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau123(p, q, r) = tau123(p, q, r) - ( &
-                    2 * tau120(q, p, r)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
     deallocate(tau120)
 
-    allocate(tau121(NAO, NAO, NAO))
-    !$omp single
-    tau121 = 0.0
-    !$omp end single
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-                do s=1, NAO
-                    tau121(p, q, r) = tau121(p, q, r) + ( &
-                        H012(p, q, s) * t3(r, s, q)&
-                    )
-                end do
-            end do
-        end do
-    end do
-    !$omp end do
-
     !$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
     
-                tau122(p, q, r) = tau122(p, q, r) - ( &
-                    2 * tau121(p, q, r)&
+                tau121(p, q, r) = tau121(p, q, r) + ( &
+                    12 * t1(r) * H030(q, r, p)&
                 )
     
             end do
@@ -6730,8 +6773,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau122(p, q, r) = tau122(p, q, r) - ( &
-                    2 * tau121(q, p, r)&
+                tau121(p, q, r) = tau121(p, q, r) + ( &
+                    H120(r, p, q)&
                 )
     
             end do
@@ -6744,8 +6787,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau123(p, q, r) = tau123(p, q, r) + ( &
-                    2 * tau121(p, q, r)&
+                tau121(p, q, r) = tau121(p, q, r) + ( &
+                    H120(r, q, p)&
                 )
     
             end do
@@ -6758,8 +6801,8 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau123(p, q, r) = tau123(p, q, r) + ( &
-                    2 * tau121(q, p, r)&
+                Res3(p, q, r) = Res3(p, q, r) + ( &
+                    4 * tau7(r, q) * tau121(r, q, p)&
                 )
     
             end do
@@ -6774,21 +6817,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau122(p, q, r) = tau122(p, q, r) + ( &
-                    12 * t1(r) * H030(q, r, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau122(p, q, r) = tau122(p, q, r) + ( &
+                tau122(p, q, r) = tau122(p, q, r) - ( &
                     H120(r, p, q)&
                 )
     
@@ -6802,7 +6831,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau122(p, q, r) = tau122(p, q, r) + ( &
+                tau122(p, q, r) = tau122(p, q, r) - ( &
                     H120(r, q, p)&
                 )
     
@@ -6816,8 +6845,22 @@
         do q=1, NAO
             do p=1, NAO
     
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    4 * tau7(r, q) * tau122(r, q, p)&
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    4 * tau7(r, p) * tau122(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    4 * tau7(q, p) * tau122(q, p, r)&
                 )
     
             end do
@@ -6827,64 +6870,6 @@
 
     deallocate(tau122)
 
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau123(p, q, r) = tau123(p, q, r) - ( &
-                    H120(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau123(p, q, r) = tau123(p, q, r) - ( &
-                    H120(r, q, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    4 * tau7(r, p) * tau123(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    4 * tau7(q, p) * tau123(q, p, r)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau123)
-
     deallocate(tau7)
 
     !$omp do schedule(static)
@@ -6892,7 +6877,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau124(p, q, r) = tau124(p, q, r) + ( &
+                tau123(p, q, r) = tau123(p, q, r) + ( &
                     2 * t1(p)**2 * t1(r) * t2(q, r)&
                 )
     
@@ -6906,7 +6891,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau124(p, q, r) = tau124(p, q, r) + ( &
+                tau123(p, q, r) = tau123(p, q, r) + ( &
                     t1(p)**2 * t3(r, r, q)&
                 )
     
@@ -6920,7 +6905,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau124(p, q, r) = tau124(p, q, r) + ( &
+                tau123(p, q, r) = tau123(p, q, r) + ( &
                     t1(r)**2 * t3(p, p, q)&
                 )
     
@@ -6935,7 +6920,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau57(r, q) * tau124(q, p, r)&
+                    2 * tau57(r, q) * tau123(q, p, r)&
                 )
     
             end do
@@ -6945,13 +6930,13 @@
 
     deallocate(tau57)
 
-    deallocate(tau124)
+    deallocate(tau123)
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau126(p, q) = tau126(p, q) + ( &
+            tau125(p, q) = tau125(p, q) + ( &
                 3 * H030(p, p, q)&
             )
     
@@ -6963,8 +6948,8 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau127(p, q) = tau127(p, q) + ( &
-                tau126(p, q)&
+            tau126(p, q) = tau126(p, q) + ( &
+                tau125(p, q)&
             )
     
         end do
@@ -6975,20 +6960,8 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau127(p, q) = tau127(p, q) + ( &
-                tau126(q, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau128(p, q) = tau128(p, q) + ( &
-                tau126(p, q)&
+            tau126(p, q) = tau126(p, q) + ( &
+                tau125(q, p)&
             )
     
         end do
@@ -7000,44 +6973,89 @@
         do p=1, NAO
     
             tau128(p, q) = tau128(p, q) + ( &
-                tau126(q, p)&
+                tau125(p, q)&
             )
     
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau128(p, q) = tau128(p, q) + ( &
+                tau125(q, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau125)
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau126(p, q) = tau126(p, q) + ( &
+                H020(q, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    allocate(tau127(NAO, NAO, NAO))
+    !$omp single
+    tau127 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau127(p, q, r) = tau127(p, q, r) + ( &
+                    t1(p) * t2(r, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau127(p, q, r) = tau127(p, q, r) + ( &
+                    t1(r) * t2(q, p)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) + ( &
+                    8 * tau126(q, p) * tau127(p, r, q)&
+                )
+    
+            end do
         end do
     end do
     !$omp end do
 
     deallocate(tau126)
 
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau127(p, q) = tau127(p, q) + ( &
-                H020(q, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    8 * tau127(q, p) * tau103(q, r, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
     deallocate(tau127)
-
-    deallocate(tau103)
 
     !$omp do schedule(static)
     do q=1, NAO
@@ -7057,7 +7075,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    8 * tau128(r, q) * tau116(r, p, q)&
+                    8 * tau128(r, q) * tau115(r, p, q)&
                 )
     
             end do
@@ -7065,7 +7083,7 @@
     end do
     !$omp end do
 
-    deallocate(tau116)
+    deallocate(tau115)
 
     allocate(tau129(NAO, NAO, NAO))
     !$omp single
@@ -7251,6 +7269,8 @@
     end do
     !$omp end do
 
+    deallocate(tau104)
+
     deallocate(tau132)
 
     allocate(tau133(NAO, NAO, NAO))
@@ -7352,13 +7372,15 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau107(p, r) * tau134(q, r, p)&
+                    2 * tau106(p, q) * tau134(r, q, p)&
                 )
     
             end do
         end do
     end do
     !$omp end do
+
+    deallocate(tau106)
 
     !$omp do schedule(static)
     do r=1, NAO
@@ -7366,7 +7388,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau107(p, q) * tau134(r, q, p)&
+                    2 * tau110(r, p) * tau134(q, r, p)&
                 )
     
             end do
@@ -7374,25 +7396,7 @@
     end do
     !$omp end do
 
-    deallocate(tau107)
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau111(r, q) * tau134(p, r, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau134)
-
-    deallocate(tau111)
+    deallocate(tau110)
 
     !$omp do schedule(static)
     do r=1, NAO
@@ -7414,7 +7418,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau68(r, q) * tau135(p, q, r)&
+                    2 * tau68(r, p) * tau135(q, p, r)&
                 )
     
             end do
@@ -7474,7 +7478,42 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    4 * t2(r, p) * tau137(q, r, p)&
+                    4 * t2(q, p) * tau137(r, q, p)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau137)
+
+    allocate(tau138(NAO, NAO, NAO))
+    !$omp single
+    tau138 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau138(p, q, r) = tau138(p, q, r) + ( &
+                    t3(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau138(p, q, r) = tau138(p, q, r) + ( &
+                    t1(r) * t2(q, p)&
                 )
     
             end do
@@ -7488,7 +7527,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) + ( &
-                    4 * t2(q, p) * tau137(r, q, p)&
+                    48 * H030(r, p, q) * tau138(r, p, q)&
                 )
     
             end do
@@ -7496,14 +7535,14 @@
     end do
     !$omp end do
 
-    deallocate(tau137)
+    deallocate(tau138)
 
     !$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
     
-                tau138(p, q, r) = tau138(p, q, r) + ( &
+                tau139(p, q, r) = tau139(p, q, r) + ( &
                     H111(p, q, r)&
                 )
     
@@ -7518,7 +7557,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * tau104(r, p) * tau138(q, p, r)&
+                    2 * tau112(r, q) * tau139(p, q, r)&
                 )
     
             end do
@@ -7526,7 +7565,7 @@
     end do
     !$omp end do
 
-    deallocate(tau104)
+    deallocate(tau112)
 
     !$omp do schedule(static)
     do r=1, NAO
@@ -7534,21 +7573,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t1(r)**2 * t1(q) * tau138(p, q, r)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t1(p)**2 * t1(r) * tau138(q, r, p)&
+                    2 * t1(r)**2 * t1(p) * tau139(q, p, r)&
                 )
     
             end do
@@ -7562,7 +7587,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t1(p)**2 * t1(q) * tau138(r, q, p)&
+                    2 * t1(p)**2 * t1(q) * tau139(r, q, p)&
                 )
     
             end do
@@ -7570,16 +7595,58 @@
     end do
     !$omp end do
 
-    allocate(tau139(NAO, NAO))
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau140(p, q) = tau140(p, q) + ( &
+                2 * t2(q, p)**2&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau140(p, q) = tau140(p, q) + ( &
+                t1(p)**2 * t1(q)**2&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) + ( &
+                    2 * tau140(q, r) * tau134(p, r, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau140)
+
+    deallocate(tau134)
+
+    allocate(tau141(NAO, NAO))
     !$omp single
-    tau139 = 0.0
+    tau141 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau139(p, q) = tau139(p, q) + ( &
+            tau141(p, q) = tau141(p, q) + ( &
                 2 * t1(p) * t2(q, p)&
             )
     
@@ -7591,7 +7658,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau139(p, q) = tau139(p, q) + ( &
+            tau141(p, q) = tau141(p, q) + ( &
                 t1(p)**2 * t1(q)&
             )
     
@@ -7605,7 +7672,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * tau139(q, r) * tau138(p, r, q)&
+                    2 * tau141(q, r) * tau139(p, r, q)&
                 )
     
             end do
@@ -7613,88 +7680,23 @@
     end do
     !$omp end do
 
-    deallocate(tau138)
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    2 * tau141(p, r) * tau139(q, r, p)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
 
     deallocate(tau139)
 
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                tau140(p, q, r) = tau140(p, q, r) + ( &
-                    H111(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    allocate(tau141(NAO, NAO, NAO))
-    !$omp single
-    tau141 = 0.0
-    !$omp end single
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-                do s=1, NAO
-                    tau141(p, q, r) = tau141(p, q, r) + ( &
-                        t3(s, p, q) * tau140(p, s, r)&
-                    )
-                end do
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau141(p, r, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau141(q, r, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
     deallocate(tau141)
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-                do s=1, NAO
-                    Res3(p, q, r) = Res3(p, q, r) + ( &
-                        2 * t3(s, q, r) * tau140(r, s, p)&
-                    )
-                end do
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau140)
 
     !$omp do schedule(static)
     do r=1, NAO
@@ -7721,23 +7723,9 @@
             do p=1, NAO
                 do s=1, NAO
                     tau143(p, q, r) = tau143(p, q, r) + ( &
-                        t3(s, p, q) * tau142(q, s, r)&
+                        t3(s, p, q) * tau142(p, s, r)&
                     )
                 end do
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    2 * tau143(p, q, r)&
-                )
-    
             end do
         end do
     end do
@@ -7757,6 +7745,20 @@
     end do
     !$omp end do
 
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) + ( &
+                    2 * tau143(q, r, p)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
     deallocate(tau143)
 
     !$omp do schedule(static)
@@ -7765,7 +7767,7 @@
             do p=1, NAO
                 do s=1, NAO
                     Res3(p, q, r) = Res3(p, q, r) + ( &
-                        2 * t3(s, p, q) * tau142(p, s, r)&
+                        2 * t3(s, q, r) * tau142(r, s, p)&
                     )
                 end do
             end do
@@ -7776,10 +7778,89 @@
     deallocate(tau142)
 
     !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                tau144(p, q, r) = tau144(p, q, r) + ( &
+                    H111(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    allocate(tau145(NAO, NAO, NAO))
+    !$omp single
+    tau145 = 0.0
+    !$omp end single
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+                do s=1, NAO
+                    tau145(p, q, r) = tau145(p, q, r) + ( &
+                        t3(s, p, q) * tau144(q, s, r)&
+                    )
+                end do
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) + ( &
+                    2 * tau145(p, q, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) + ( &
+                    2 * tau145(p, r, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau145)
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+                do s=1, NAO
+                    Res3(p, q, r) = Res3(p, q, r) + ( &
+                        2 * t3(s, p, q) * tau144(p, s, r)&
+                    )
+                end do
+            end do
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau144)
+
+    !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau145(p, q) = tau145(p, q) + ( &
+            tau147(p, q) = tau147(p, q) + ( &
                 H101(p, q)&
             )
     
@@ -7791,7 +7872,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau145(p, q) = tau145(p, q) + ( &
+            tau147(p, q) = tau147(p, q) + ( &
                 2 * H111(p, q, q)&
             )
     
@@ -7803,45 +7884,45 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) + ( &
-                t1(q) * tau145(p, q)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau147(p, q) = tau147(p, q) + ( &
-                t1(p) * tau145(q, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
             tau148(p, q) = tau148(p, q) + ( &
-                t1(p) * tau145(q, p)&
+                t1(q) * tau147(p, q)&
             )
     
         end do
     end do
     !$omp end do
 
-    deallocate(tau145)
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau149(p, q) = tau149(p, q) + ( &
+                t1(p) * tau147(q, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
 
     !$omp do schedule(static)
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) - ( &
+            tau150(p, q) = tau150(p, q) + ( &
+                t1(p) * tau147(q, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau147)
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau148(p, q) = tau148(p, q) - ( &
                 H110(p, q)&
             )
     
@@ -7853,7 +7934,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) - ( &
+            tau148(p, q) = tau148(p, q) - ( &
                 2 * H120(p, q, q)&
             )
     
@@ -7865,7 +7946,7 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau146(p, q) = tau146(p, q) - ( &
+            tau148(p, q) = tau148(p, q) - ( &
                 3 * t1(q)**2 * H102(p, q, q)&
             )
     
@@ -7879,7 +7960,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t2(r, q) * tau146(p, q)&
+                    2 * t2(r, q) * tau148(p, q)&
                 )
     
             end do
@@ -7893,139 +7974,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t2(r, p) * tau146(q, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau146)
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau147(p, q) = tau147(p, q) - ( &
-                H110(q, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau147(p, q) = tau147(p, q) - ( &
-                2 * H120(q, p, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau147(p, q) = tau147(p, q) - ( &
-                3 * t1(p)**2 * H102(q, p, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t2(r, q) * tau147(r, p)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    deallocate(tau147)
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau148(p, q) = tau148(p, q) - ( &
-                H110(q, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau148(p, q) = tau148(p, q) - ( &
-                2 * H120(q, p, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau148(p, q) = tau148(p, q) - ( &
-                3 * t1(p)**2 * H102(q, p, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t2(q, p) * tau148(q, r)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t2(r, p) * tau148(r, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * t2(q, p) * tau148(p, r)&
+                    2 * t2(r, p) * tau148(q, p)&
                 )
     
             end do
@@ -8036,45 +7985,37 @@
     deallocate(tau148)
 
     !$omp do schedule(static)
-    do p=1, NAO
+    do q=1, NAO
+        do p=1, NAO
     
-        tau149(p) = tau149(p) - ( &
-            H010(p)&
-        )
+            tau149(p, q) = tau149(p, q) - ( &
+                H110(q, p)&
+            )
     
+        end do
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, NAO
+    do q=1, NAO
+        do p=1, NAO
     
-        tau149(p) = tau149(p) - ( &
-            2 * H020(p, p)&
-        )
+            tau149(p, q) = tau149(p, q) - ( &
+                2 * H120(q, p, p)&
+            )
     
+        end do
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, NAO
+    do q=1, NAO
+        do p=1, NAO
     
-        tau149(p) = tau149(p) - ( &
-            4 * H030(p, p, p)&
-        )
+            tau149(p, q) = tau149(p, q) - ( &
+                3 * t1(p)**2 * H102(q, p, p)&
+            )
     
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * tau149(p) * t3(r, p, q)&
-                )
-    
-            end do
         end do
     end do
     !$omp end do
@@ -8085,21 +8026,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * tau149(q) * t3(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) - ( &
-                    2 * tau149(r) * t3(r, p, q)&
+                    2 * t2(r, q) * tau149(r, p)&
                 )
     
             end do
@@ -8113,20 +8040,8 @@
     do q=1, NAO
         do p=1, NAO
     
-            tau150(p, q) = tau150(p, q) + ( &
-                H101(q, p)&
-            )
-    
-        end do
-    end do
-    !$omp end do
-
-    !$omp do schedule(static)
-    do q=1, NAO
-        do p=1, NAO
-    
-            tau150(p, q) = tau150(p, q) + ( &
-                2 * H111(q, p, p)&
+            tau150(p, q) = tau150(p, q) - ( &
+                H110(q, p)&
             )
     
         end do
@@ -8138,6 +8053,172 @@
         do p=1, NAO
     
             tau150(p, q) = tau150(p, q) - ( &
+                2 * H120(q, p, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau150(p, q) = tau150(p, q) - ( &
+                3 * t1(p)**2 * H102(q, p, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    2 * t2(q, p) * tau150(q, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    2 * t2(r, p) * tau150(r, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    2 * t2(q, p) * tau150(p, r)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau150)
+
+    !$omp do schedule(static)
+    do p=1, NAO
+    
+        tau151(p) = tau151(p) - ( &
+            H010(p)&
+        )
+    
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do p=1, NAO
+    
+        tau151(p) = tau151(p) - ( &
+            2 * H020(p, p)&
+        )
+    
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do p=1, NAO
+    
+        tau151(p) = tau151(p) - ( &
+            4 * H030(p, p, p)&
+        )
+    
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    2 * tau151(p) * t3(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    2 * tau151(q) * t3(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do r=1, NAO
+        do q=1, NAO
+            do p=1, NAO
+    
+                Res3(p, q, r) = Res3(p, q, r) - ( &
+                    2 * tau151(r) * t3(r, p, q)&
+                )
+    
+            end do
+        end do
+    end do
+    !$omp end do
+
+    deallocate(tau151)
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau152(p, q) = tau152(p, q) + ( &
+                H101(q, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau152(p, q) = tau152(p, q) + ( &
+                2 * H111(q, p, p)&
+            )
+    
+        end do
+    end do
+    !$omp end do
+
+    !$omp do schedule(static)
+    do q=1, NAO
+        do p=1, NAO
+    
+            tau152(p, q) = tau152(p, q) - ( &
                 6 * t1(p) * H102(q, p, p)&
             )
     
@@ -8151,7 +8232,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    tau150(q, r) * t3(q, q, p)&
+                    tau152(q, r) * t3(q, q, p)&
                 )
     
             end do
@@ -8165,7 +8246,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    tau150(r, p) * t3(r, r, q)&
+                    tau152(r, p) * t3(r, r, q)&
                 )
     
             end do
@@ -8179,7 +8260,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    tau150(r, q) * t3(r, r, p)&
+                    tau152(r, q) * t3(r, r, p)&
                 )
     
             end do
@@ -8187,11 +8268,11 @@
     end do
     !$omp end do
 
-    deallocate(tau150)
+    deallocate(tau152)
 
-    allocate(tau151(NAO, NAO, NAO))
+    allocate(tau153(NAO, NAO, NAO))
     !$omp single
-    tau151 = 0.0
+    tau153 = 0.0
     !$omp end single
 
     !$omp do schedule(static)
@@ -8199,7 +8280,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau151(p, q, r) = tau151(p, q, r) + ( &
+                tau153(p, q, r) = tau153(p, q, r) + ( &
                     H201(p, q, r)&
                 )
     
@@ -8213,7 +8294,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau151(p, q, r) = tau151(p, q, r) + ( &
+                tau153(p, q, r) = tau153(p, q, r) + ( &
                     H201(q, p, r)&
                 )
     
@@ -8228,7 +8309,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    t1(p)**2 * tau151(r, q, p)&
+                    t1(p)**2 * tau153(r, q, p)&
                 )
     
             end do
@@ -8242,7 +8323,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    t1(q)**2 * tau151(p, r, q)&
+                    t1(q)**2 * tau153(p, r, q)&
                 )
     
             end do
@@ -8256,7 +8337,7 @@
             do p=1, NAO
     
                 Res3(p, q, r) = Res3(p, q, r) - ( &
-                    t1(r)**2 * tau151(q, p, r)&
+                    t1(r)**2 * tau153(q, p, r)&
                 )
     
             end do
@@ -8264,14 +8345,14 @@
     end do
     !$omp end do
 
-    deallocate(tau151)
+    deallocate(tau153)
 
     !$omp do schedule(static)
     do r=1, NAO
         do q=1, NAO
             do p=1, NAO
     
-                tau152(p, q, r) = tau152(p, q, r) + ( &
+                tau154(p, q, r) = tau154(p, q, r) + ( &
                     H201(q, r, p)&
                 )
     
@@ -8285,7 +8366,7 @@
         do q=1, NAO
             do p=1, NAO
     
-                tau152(p, q, r) = tau152(p, q, r) + ( &
+                tau154(p, q, r) = tau154(p, q, r) + ( &
                     H201(r, q, p)&
                 )
     
@@ -8300,7 +8381,7 @@
             do p=1, NAO
                 do s=1, NAO
                     Res3(p, q, r) = Res3(p, q, r) + ( &
-                        t2(s, p) * tau152(s, r, q)&
+                        t2(s, p) * tau154(s, r, q)&
                     )
                 end do
             end do
@@ -8308,7 +8389,7 @@
     end do
     !$omp end do
 
-    deallocate(tau152)
+    deallocate(tau154)
 
     !$omp do schedule(static) reduction(+:Ene)
     
@@ -8428,21 +8509,6 @@
     end do
     !$omp end do
 
-    !$omp do schedule(static)
-    do r=1, NAO
-        do q=1, NAO
-            do p=1, NAO
-    
-                Res3(p, q, r) = Res3(p, q, r) + ( &
-                    48 * H030(r, p, q) * t3(r, p, q)&
-                )
-    
-            end do
-        end do
-    end do
-    !$omp end do
-
     !$omp end parallel
-
     End Subroutine CCSDT_SFS
 End Module CCRes_SFS
