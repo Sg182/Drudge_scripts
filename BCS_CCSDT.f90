@@ -16,7 +16,7 @@ Module CCResCCSDT
     Complex (Kind=pr), Intent(In)    :: H40(NAO,NAO), H31(NAO,NAO)
     Complex (Kind=pr), Intent(In)    :: H04(NAO,NAO), H13(NAO,NAO)
     Complex (Kind=pr), Intent(In)    :: H22(NAO,NAO), HT22(NAO,NAO)
-    Complex (Kind=pr), Intent(Out)   :: Ene,Res1,Res2,Res3
+    Complex (Kind=pr), Intent(Out)   :: Ene,Res1(NAO),Res2(NAO,NAO),Res3(NAO,NAO,NAO)
 
     Integer                          :: p, q, r, s, i, j, k, l
     complex(kind=pr) , dimension(:), allocatable :: tau0
