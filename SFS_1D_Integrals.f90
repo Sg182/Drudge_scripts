@@ -3009,17 +3009,6 @@
 
 
 
-    !Symmetrize W021
-    do r = 1, NAO
-    do p = 1, NAO
-    do q = p, NAO
-      tmp = 0.5_pr * (W021(p,q,r) + W021(q,p,r))
-      W021(p,q,r) = tmp
-      W021(q,p,r) = tmp
-    end do
-    end do
-    end do
-
 
     
     !symmetrize W102
