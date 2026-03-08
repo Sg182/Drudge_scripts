@@ -49,7 +49,7 @@
     Complex (Kind=pr)                :: Denom
     Real (Kind=pr),    Allocatable   :: w(:)
     Real (Kind=pr)                   :: w0, mix
-    Real (Kind=pr),    Parameter     :: TolMax = 1.0E-8_pr
+    Real (Kind=pr),    Parameter     :: TolMax = 1.0E-10_pr
     Integer,           Parameter     :: CycMax = 1000
     Integer                          :: NIter, IAlloc
     Real (Kind=pr)                   :: dT, dTold 
@@ -284,9 +284,9 @@ Allocate(fx_final(nBrd), R1fin(NAOBrd), R2fin(NAOBrd,NAOBrd), R3fin(NAOBrd,NAOBr
 If (IAlloc/=0) Stop "Could not allocate in final residual check"
 
 ! Evaluate F at the *final* amplitudes (xnew is already the final)
-Call Mat2Vec(xold,T1,T2,T3,T4,NAOBrd,nBrd)    ! pack current T back to xold
-Call EvalF(xold, fx_final, NAOBrd, nBrd)   ! compute fresh residuals
-
+!Call Mat2Vec(xold,T1,T2,T3,T4,NAOBrd,nBrd)    ! pack current T back to xold
+Call EvalF(x_new, fx_final, NAOBrd, nBrd)   ! compute fresh residuals
+Ene = EneBrd
 Call Vec2Mat(fx_final, R1fin, R2fin, R3fin,R4fin, NAOBrd, nBrd)
 
 maxR1 = maxval(abs(R1fin))
@@ -323,6 +323,8 @@ write(8,'(A,1PE12.4)') 'FINAL max|Res2| = ', maxR2
 write(8,'(A,1PE12.4)') 'FINAL max|Res3| = ', maxR3
 write(8,'(A,1PE12.4)') 'FINAL max|Res4| = ', maxR4
 write(8,'(A,1PE12.4)') 'FINAL max|Res | = ', maxAll
+
+Call PrintAmpsResFromVec(8, xnew, fx_final, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd)
 
 ! If not actually converged, flag it clearly:
 If (maxAll > TolMax) Then
