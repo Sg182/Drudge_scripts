@@ -22,6 +22,8 @@
     Complex(Kind=pr), Allocatable  :: MixVec(:)
     Complex(Kind=pr)               :: EneBrd
     Logical                        :: DoCCD = .False.
+    Logical                        :: DoCCSD
+    Logical                        :: DoCCSDT = .False.
 
     Contains
 
@@ -61,6 +63,10 @@
     print*, "T3 initial:", maxval(real(T3))
     print*, "T4 initial:", maxval(real(T4))
     DoCCD = DoCCDIn
+    DoCCD = DoCCDIn
+    DoCCD = .FALSE.
+    DoCCSD = .FALSE.
+    DoCCSDT = .FALSE.
  ! y contains T1 T2
     NAOBrd = NAO
     nsBrd = NAO                 !Made changes here
@@ -549,6 +555,12 @@ END BLOCK
     Call Vec2Mat(x,T1,T2,T3,T4,NAOBrd,nBrd)
 ! Build Residuals 
     If(DoCCD) T1 = Zero ! CCD!
+     
+    IF(DoCCSD) then
+        T3 = Zero
+        T4 = Zero
+    ENDIF
+    If(DoCCSDT) T4 = Zero
     !T1 = zero
     !T3 = zero
     !Call BuildRes0(EneBrd,T1,T2,NAOBrd,  &             !This function Calculates Energy
@@ -564,6 +576,11 @@ END BLOCK
     call CCSDTQ(EneBrd,Res1,Res2,Res3,Res4,T1,T2,T3,T4,NAOBrd,H20Brd,H11Brd,H02Brd,H40Brd,H31Brd,H22Brd,HT22Brd,H13Brd,H04Brd)
     EneBrd = EneBrd +  H00Brd
     If(DoCCD) Res1 = Zero ! CCD!
+    If(DoCCSD) then
+     Res3 = Zero
+     Res4 = Zero
+    EndIf
+    If(DoCCSDT) Res4  = Zero
     !Res1 = zero
     !Res3 = Zero
 ! Put dUtilde into dy
