@@ -6,6 +6,19 @@ Module CCResCCSDT
     
     Subroutine CCSDT(Ene,Res1,Res2,Res3,T1,T2,T3,NAO, &
         H20,H11,H02,H40,H31,H22,HT22,H13,H04)
+
+    Implicit None
+    Integer,           Intent(In)    :: NAO
+    Complex (Kind=pr), Intent(In)    :: T1(NAO)
+    Complex (Kind=pr), Intent(In)    :: T2(NAO,NAO)
+    Complex (Kind=pr), Intent(In)    :: T3(NAO,NAO,NAO)
+    Complex (Kind=pr), Intent(In)    :: H20(NAO), H11(NAO), H02(NAO)
+    Complex (Kind=pr), Intent(In)    :: H40(NAO,NAO), H31(NAO,NAO)
+    Complex (Kind=pr), Intent(In)    :: H04(NAO,NAO), H13(NAO,NAO)
+    Complex (Kind=pr), Intent(In)    :: H22(NAO,NAO), HT22(NAO,NAO)
+    Complex (Kind=pr), Intent(Out)   :: Ene,Res1,Res2,Res3
+
+    Integer                          :: p, q, r, s, i, j, k, l
     complex(kind=pr) , dimension(:), allocatable :: tau0
 
     complex(kind=pr) , dimension(:), allocatable :: tau1
