@@ -113,7 +113,7 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
 ! Initialize 
     If(DoCCD) Z1 = Zero ! CCD!
   
-    Call Mat2Vec(xold,Z1,Z2,NAOBrd,nBrd)
+    Call Mat2Vec(xold,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
     NIter = 0
     dT = 1.0_pr
     dF = Zero
@@ -139,7 +139,7 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
     EndDo
    
 
-    Call Mat2Vec(MixVec,Z1,Z2,NAOBrd,nBrd)
+    Call Mat2Vec(MixVec,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
 ! Start iteration
     xnew = xold
     
@@ -169,7 +169,7 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
       Write(8,1040) Real(EneBrd),NIter,dT
       
       If (NIter > CycMax) then
-        Call Vec2Mat(xnew,Z1,Z2,NAOBrd,nBrd)
+        Call Vec2Mat(xnew,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
 ! checkpoint T1 and T2
         
         Open(70,File="Chk_Z1",status="Replace")
@@ -177,6 +177,12 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
         Close(70)
         Open(70,File="Chk_Z2",status="Replace")
         Write(70,*) Z2
+        Close(70)
+        Open(70,File="Chk_Z3",status="Replace")
+        Write(70,*) Z3
+        Close(70)
+        Open(70,File="Chk_Z3",status="Replace")
+        Write(70,*) Z3
         Close(70)
         Stop 'Too many cycles in PbarHbar Feedback loop'
       EndIf
@@ -191,12 +197,18 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
      ! Write(*,*) "NAOBrd = ", NAOBrd
      ! Write(*,*) "nBrd = ", nBrd
 
-      Call Vec2Mat(xnew,Z1,Z2,NAOBrd,nBrd)
+      Call Vec2Mat(xnew,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
       Open(70,File="Chk_Z1",status="Replace")
       Write(70,*) Z1
       Close(70)
       Open(70,File="Chk_Z2",status="Replace")
       Write(70,*) Z2
+      Close(70)
+      Open(70,File="Chk_Z3",status="Replace")
+      Write(70,*) Z3
+      Close(70)
+      Open(70,File="Chk_Z4",status="Replace")
+      Write(70,*) Z4
       Close(70)
 ! End of Debug
     EndDo
