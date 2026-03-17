@@ -1,4 +1,4 @@
-Module Broyden_TCC_Z
+Module Broyden_CCSDTQ_Z
 ! Implementation of modified Broyden's methods
 ! Ref: PRC 78, 014318; PRB, 38, 12807 
 Use Precision
@@ -697,4 +697,4 @@ Subroutine PrintAmpsResCore(unit, tag, A1,A2, NAO)
   
 End Subroutine PrintAmpsResCore
 
-EndModule Broyden_TCC_Z
+EndModule Broyden_CCSDTQ_Z
