@@ -427,11 +427,15 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
     Complex (Kind=pr),   Intent(In)  :: x(nBrd)
     Complex (Kind=pr),   Intent(Out) :: fx(nBrd)
     Complex (Kind=pr),   Allocatable :: Z1(:), Z2(:,:)
+    Complex (Kind=pr),   Allocatable :: Z3(:,:,:), Z4(:,:,:,:)
     Complex (Kind=pr),   Allocatable :: L1(:), L2(:,:) ! Change this accordingly
+    Complex (Kind=pr),   Allocatable :: L3(:,:,:), L4(:,:,:,:) ! Change this accordingly
     Integer                          :: IAlloc
 ! Allocate
     Allocate(Z1(NAOBrd), Z2(NAOBrd,NAOBrd),     &
+            Z3(NAOBrd,NAOBrd,NAOBrd,NAOBrd), Z4(NAOBrd,NAOBrd,NAOBrd,NAOBrd) ,&
              L1(NAOBrd), L2(NAOBrd,NAOBrd), &
+             L3(NAOBrd,NAOBrd,NAOBrd,NAOBrd), L4(NAOBrd,NAOBrd,NAOBrd,NAOBrd),&
              Stat=IAlloc)
     If(IAlloc /= 0) Stop "Could not allocate in EvalF"
 ! Determine what T1 and T2 are
@@ -440,17 +444,17 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
    ! Write(*,*) "NAOBrd = ", NAOBrd
    ! Write(*,*) "nBrd = ", nBrd
 
-    Call Vec2Mat(x,Z1,Z2,NAOBrd,nBrd)
+    Call Vec2Mat(x,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
 ! Build Residuals 
     If(DoCCD) Z1 = Zero ! CCD!
-    Call CCSD_Z(L1,L2,Z1,Z2,T1Brd,T2Brd,NAOBrd,  &             !This function Calculates Energy
+    Call CCSDTQ_Z(L1,L2,L3,L4,Z1,Z2,Z3,Z4,T1Brd,T2Brd,T3Brd,T4Brd,NAOBrd,  &             !This function Calculates Energy
           H20Brd,H11Brd,H02Brd,H40Brd,H31Brd,H22Brd,HT22Brd,H13Brd,H04Brd)
     
     If(DoCCD) L1 = Zero ! CCD!
 ! Put dUtilde into dy
-    Call Mat2Vec(fx,L1,L2,NAOBrd,nBrd)
+    Call Mat2Vec(fx,L1,L2,L3,L4,NAOBrd,nBrd)
 ! Deallocate
-    Deallocate(Z1, L1, Z2, L2,  & 
+    Deallocate(Z1, L1, Z2, L2, Z3, L4, Z4, L4,  & 
                Stat=IAlloc)
     If(IAlloc /= 0) Stop "Could not deallocate in EvalF"
     Return
