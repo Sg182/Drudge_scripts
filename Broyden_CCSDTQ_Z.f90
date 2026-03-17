@@ -214,7 +214,7 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
     EndDo
   
 
-    Call Vec2Mat(xnew,Z1,Z2,NAOBrd,nBrd)
+    Call Vec2Mat(xnew,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
     !Ene = EneBrd
     Write(8,1020)
     Write(8,1050) NIter
@@ -326,7 +326,32 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
       IamNum    = IamNum + 1
       y(IamNum) = Z2(I,J)
     EndDo
+    EndDo 
+
+    Do K = 3, NAOBrd
+    Do J = 2, K-1
+    Do I = 1, J-1
+        IamNum    = IamNum + 1
+        y(IamNum) = Z3(I,J,K)
     EndDo
+    EndDo
+    EndDo
+
+    ! Put T4 into y
+    Do L = 4, NAOBrd
+    Do K = 3, L-1
+    Do J = 2, K-1
+    Do I = 1, J-1
+        IamNum    = IamNum + 1
+        y(IamNum) = Z4(I,J,K,L)
+    End Do
+    End Do
+    End Do
+    End Do
+
+! Check compatibility between dimension of y and Utildes
+  !  Write(*,*) "In Mat2Vec NAOBrd = ", NAOBrd, " nBrd = ", nBrd, "IamNum = ", IamNum
+
 ! Check compatibility between dimension of y and Utildes
   !  Write(*,*) "In Mat2Vec NAOBrd = ", NAOBrd, " nBrd = ", nBrd, "IamNum = ", IamNum
 
@@ -334,15 +359,17 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
     Return
     End Subroutine Mat2Vec
 
-    Subroutine Vec2Mat(y,Z1,Z2,NAOBrd,nBrd)
+    Subroutine Vec2Mat(y,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
     Implicit None
     Integer , Intent(In) :: NAOBrd, nBrd
     Complex (Kind=pr),   Intent(In)  :: y(nBrd)
     Complex (Kind=pr),   Intent(Out) :: Z1(NAOBrd)
     Complex (Kind=pr),   Intent(Out) :: Z2(NAOBrd,NAOBrd)
+    Complex (Kind=pr),   Intent(Out) :: Z3(NAOBrd,NAOBrd,NAOBrd)
+    Complex (Kind=pr),   Intent(Out) :: Z4(NAOBrd,NAOBrd,NAOBrd,NAOBrd)
     Complex (Kind=pr)    :: tmp 
     Integer              :: IamNum
-    Integer              :: I, J
+    Integer              :: I, J, K, L
     IamNum = 0
 ! Get T1 from y
     Do I = 1, NAOBrd
@@ -359,6 +386,34 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
       Z2(J,I)= tmp
     EndDo
     EndDo
+
+    Z3 = zero
+    Do K = 3, NAOBrd
+    Do J = 2, K-1
+    Do I = 1, J-1
+        IamNum = IamNum + 1
+        TZ(I,J,K)    = y(IamNum)
+        
+    EndDo
+    EndDo
+    EndDo
+     
+    Z4 = zero
+    ! Get T4 from y
+    Do L = 4, NAOBrd
+    Do K = 3, L-1
+    Do J = 2, K-1
+    Do I = 1, J-1
+        IamNum    = IamNum + 1
+        Z4(I,J,K,L) = y(IamNum)
+    End Do
+    End Do
+    End Do
+    End Do
+
+    Call Symm2(Z2,NAOBrd)
+    Call Symm3(Z3,NAOBrd)
+    call Symm4(Z4,NAOBrd)
 ! Check compatibility between dimension of y and Utildes
    
     If(nBrd.ne.IamNum) Stop "Dimension of y is not compatible within Broyden "
