@@ -4739,3 +4739,5 @@ Subroutine CCSDTQ_Z(L1,L2,L3,L4,z1,z2,z3,z4,T1,T2,T3,T4,NAO,H20,H11,H02,H40,H31,
 
 
     !$omp end parallel
+    end Subroutine CCSDTQ_Z
+    End Module CCLamCCSDTQ
