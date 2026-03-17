@@ -22,7 +22,7 @@
     Complex(Kind=pr), Allocatable  :: MixVec(:)
     Complex(Kind=pr)               :: EneBrd
     Logical                        :: DoCCD = .False.
-    Logical                        :: DoCCSD
+    Logical                        :: DoCCSD 
     Logical                        :: DoCCSDT = .False.
 
     Contains
@@ -43,6 +43,7 @@
     Complex (Kind=pr), Intent(In)    :: H04(NAO,NAO), H13(NAO,NAO)
     Complex (Kind=pr), Intent(In)    :: H22(NAO,NAO), HT22(NAO,NAO)
     Logical,           Intent(In)    :: DoCCDIn
+    Logical                          ::DoCCSDTIn
     Integer                          :: I, J, K, L 
 ! Broyden iteration stuff
     Complex (Kind=pr), Allocatable   :: xold(:), xnew(:)
@@ -52,7 +53,7 @@
     Real (Kind=pr),    Allocatable   :: w(:)
     Real (Kind=pr)                   :: w0, mix
     Real (Kind=pr),    Parameter     :: TolMax = 1.0E-10_pr
-    Integer,           Parameter     :: CycMax = 1000
+    Integer,           Parameter     :: CycMax = 2000
     Integer                          :: NIter, IAlloc
     Real (Kind=pr)                   :: dT, dTold 
     Real (Kind=pr)                   :: ResNew, ResOld 
@@ -63,10 +64,10 @@
     print*, "T3 initial:", maxval(real(T3))
     print*, "T4 initial:", maxval(real(T4))
     DoCCD = DoCCDIn
-    DoCCD = DoCCDIn
     DoCCD = .FALSE.
-    DoCCSD = .FALSE.
+    DoCCSD = .TRUE.
     DoCCSDT = .FALSE.
+    
  ! y contains T1 T2
     NAOBrd = NAO
     nsBrd = NAO                 !Made changes here
@@ -91,7 +92,9 @@
                Stat=IAlloc)
       If(IAlloc/=0) Stop "Could not allocate in BroydenIter"
     EndIf
-    print*,  "Entered BCS CCSDTQ"
+    If(DoCCSDT) then
+      print*,"Entered BCS CCSDT"
+    EndIf
     Open(8,File='Output',Position='Append')
     Write(8,1020)
     Write(8,1010)
@@ -99,7 +102,9 @@
     Write(8,1030)
 ! Initialize 
     If(DoCCD) T1 = Zero ! CCD!
-  
+    If(DoCCSDT) T4 = Zero
+    !T3 = Zero
+    !T4 = Zero
     Call Mat2Vec(xold,T1,T2,T3,T4,NAOBrd,nBrd)
     NIter = 0
     dT = 1.0_pr
@@ -194,7 +199,8 @@ Do L = 4, NAO
     EndDo
   EndDo
 EndDo
-
+ 
+ !T3 = Zero
  Call Mat2Vec(MixVec,T1,T2,T3,T4,NAOBrd,nBrd)
 
 ! Make mixing gentler for higher ranks
@@ -207,7 +213,7 @@ EndDo
       
     Do While(dT >= TolMax)
       NIter = NIter + 1
-      damp = 0.1_pr
+      damp = 0.8_pr
       Call BroydenStep(xnew,xold,fold,mix,w0,w,dF,dx,NIter,nBrd,pBrd,damp)
       Call EvalF(xnew,fnew,NAOBrd,nBrd)
       ! Print every 10 iterations to avoid huge logs; change 10 -> 1 to print every iter
@@ -240,7 +246,7 @@ EndDo
         Close(70)
         Open(70,File="Chk_T3",status="Replace")
         Write(70,*) T3
-        close(70)
+        Close(70)
         Open(70,File="Chk_T4",status="Replace")
         Write(70,*) T4
         Close(70)
@@ -262,7 +268,7 @@ EndDo
       Close(70)
       Open(70,File="Chk_T3",status="Replace")
       Write(70,*) T3
-      close(70)
+      Close(70)
       Open(70,File="Chk_T4",status="Replace")
       Write(70,*) T4
       Close(70)
@@ -291,8 +297,10 @@ If (IAlloc/=0) Stop "Could not allocate in final residual check"
 
 ! Evaluate F at the *final* amplitudes (xnew is already the final)
 !Call Mat2Vec(xold,T1,T2,T3,T4,NAOBrd,nBrd)    ! pack current T back to xold
-Call EvalF(x_new, fx_final, NAOBrd, nBrd)   ! compute fresh residuals
+Call EvalF(xold, fx_final, NAOBrd, nBrd)
+
 Ene = EneBrd
+
 Call Vec2Mat(fx_final, R1fin, R2fin, R3fin,R4fin, NAOBrd, nBrd)
 
 maxR1 = maxval(abs(R1fin))
@@ -313,6 +321,7 @@ Do k=3,NAOBrd
   End Do
 End Do
 
+maxR4 = 0.0_pr
 Do l = 4,NAOBrd
 Do k=3,l-1
   Do j=2,k-1
@@ -329,9 +338,8 @@ write(8,'(A,1PE12.4)') 'FINAL max|Res2| = ', maxR2
 write(8,'(A,1PE12.4)') 'FINAL max|Res3| = ', maxR3
 write(8,'(A,1PE12.4)') 'FINAL max|Res4| = ', maxR4
 write(8,'(A,1PE12.4)') 'FINAL max|Res | = ', maxAll
-
 Call PrintAmpsResFromVec(8, xnew, fx_final, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd)
-
+!Call PrintAmpsResCore(unit,'T', T1,T2,T3,T4, NAOBrd)
 ! If not actually converged, flag it clearly:
 If (maxAll > TolMax) Then
   write(8,'(A)') '*** WARNING: Residual > TolMax at exit; NOT converged by residual! ***'
@@ -345,8 +353,8 @@ END BLOCK
 
     Write(8,1020)
     Write(8,1050) NIter
-    Write(8,1070) Real(EneBrd)
-    Write(8,1080) Aimag(EneBrd)
+    Write(8,1070) Real(Ene)!was EneBrd
+    Write(8,1080) Aimag(Ene)!was EneBrd
     Write(8,1000)
     Close(8)
 !   Write(*,*) "UCCSD energy from Broyden:", EneBrd
@@ -555,13 +563,11 @@ END BLOCK
     Call Vec2Mat(x,T1,T2,T3,T4,NAOBrd,nBrd)
 ! Build Residuals 
     If(DoCCD) T1 = Zero ! CCD!
-     
     IF(DoCCSD) then
         T3 = Zero
         T4 = Zero
-    ENDIF
+    ENDIF    
     If(DoCCSDT) T4 = Zero
-    !T1 = zero
     !T3 = zero
     !Call BuildRes0(EneBrd,T1,T2,NAOBrd,  &             !This function Calculates Energy
     !      H20Brd,H11Brd,H02Brd,H40Brd,H31Brd,H22Brd,HT22Brd,H13Brd,H04Brd)
@@ -581,8 +587,8 @@ END BLOCK
      Res4 = Zero
     EndIf
     If(DoCCSDT) Res4  = Zero
-    !Res1 = zero
     !Res3 = Zero
+    !Res1 = zero
 ! Put dUtilde into dy
     Call Mat2Vec(fx,Res1,Res2,Res3,Res4,NAOBrd,nBrd)
 ! Deallocate
@@ -603,13 +609,22 @@ END BLOCK
     Complex (Kind=pr), Intent(Out) :: xnew(nBrd)
 
     Complex (Kind=pr), Allocatable :: AMat(:,:), BetaMat(:,:), GammaVec(:)
-    Complex (Kind=pr), Allocatable :: UMat(:,:), CVec(:)
+    Complex (Kind=pr), Allocatable :: UMat(:,:), CVec(:), xtrial(:), step(:)
     Integer         :: I, J
     Integer         :: IAlloc
+    Real(kind=pr) :: step_norm, step_max
+    Allocate(xtrial(nBrd), step(nBrd), Stat=IAlloc)
+    If (IAlloc/=0) Stop "Could not allocate temporaries in BroydenStep"
 
-    xnew = xold
 
+    !xnew = xold
+    xtrial = xold
+    
     If (pBrd > 0) Then
+
+        do J = 1, nBrd
+          xtrial(J) = xtrial(J) + mix * MixVec(J) * fold(J)
+        end do
         ! Allocate arrays
         Allocate(AMat(pBrd,pBrd), UMat(nBrd,pBrd), CVec(pBrd), BetaMat(pBrd,pBrd), GammaVec(pBrd), Stat=IAlloc)
         If (IAlloc /= 0) Stop "Could not allocate in BroydenStep"
@@ -651,13 +666,13 @@ END BLOCK
 
         ! Apply update:
         ! First add mixing of residual fold (scaled by mix)
-        Do J = 1, nBrd
-            xnew(J) = xnew(J) + mix * MixVec(J) * fold(J)
-        End Do
+        !Do J = 1, nBrd
+        !    xnew(J) = xnew(J) + mix * MixVec(J) * fold(J)
+        !End Do
 
-        ! Then subtract damped Broyden corrections
+        ! Apply Broyden corrections
         Do I = 1, pBrd
-            xnew = xnew -  w(I) * GammaVec(I) * UMat(:,I)
+            xtrial = xtrial -  w(I) * GammaVec(I) * UMat(:,I)
         End Do
 
         ! Deallocate arrays
@@ -667,11 +682,20 @@ END BLOCK
     Else
         ! No previous Broyden history, do simple mixing
         Do J = 1, nBrd
-            xnew(J) = xnew(J) + mix * MixVec(J) * fold(J)
+            xtrial(J) = xtrial(J) + mix * MixVec(J) * fold(J)
         End Do
     End If
 
+    ! ===== Global damping (applies to both branches) =====
+    
+    xnew = xold + damp * (xtrial -xold)
+   
+    Deallocate(xtrial, step, Stat=IAlloc)
+    If (IAlloc /= 0) Stop "Could not deallocate temporaries in BroydenStep"
+
+
     Return
+
 End Subroutine BroydenStep
 
 
@@ -850,4 +874,4 @@ End Subroutine PrintAmpsResCore
 ! --------------------------------------------------------------
 
 
-    End Module Broyden_CCSDTQ
+   End Module Broyden_CCSDTQ
