@@ -112,10 +112,10 @@ Subroutine BroydenIterCCSDTQ_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCC
     EndIf
 !   Write(*,*) "Entered BCS CCSD"
     Open(8,File='OutputZ',Position='Append')
-    Write(8,1020)
-    Write(8,1010)
-    Write(8,1020)
-    Write(8,1030)
+    !Write(8,1020)
+    !Write(8,1010)
+    !Write(8,1020)
+    !Write(8,1030)
 ! Initialize 
     If(DoCCD) Z1 = Zero ! CCD!
   
@@ -322,12 +322,12 @@ If (IAlloc/=0) Stop "Could not deallocate in final residual check"
 END BLOCK
 ! ==========================================================================================================================
 ! =========================================================================================================================
-    Write(8,1020)
+    !Write(8,1020)
     !Write(8,1050) NIter
     !Write(8,1070) Real(EneBrd)
     !Write(8,1080) Aimag(EneBrd)
-    Write(8,1000)
-    Close(8)
+    !Write(8,1000)
+    !Close(8)
 !   Write(*,*) "UCCSD energy from Broyden:", EneBrd
 ! Outputs
     !1000  Format(14x,'**************************************************')
