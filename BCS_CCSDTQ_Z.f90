@@ -92,10 +92,7 @@ Subroutine CCSDTQ_Z(L1,L2,L3,L4,z1,z2,z3,z4,T1,T2,T3,T4,NAO,H20,H11,H02,H40,H31,
     complex(kind=pr) , dimension(NAO, NAO, NAO, NAO) :: tau71
     complex(kind=pr) , dimension(NAO, NAO, NAO, NAO) :: tau72
     complex(kind=pr) , dimension(NAO, NAO, NAO, NAO) :: tau73
-    complex(kind=pr) , dimension(NAO) :: L1
-    complex(kind=pr) , dimension(NAO, NAO) :: L2
-    complex(kind=pr) , dimension(NAO, NAO, NAO) :: L3
-    complex(kind=pr) , dimension(NAO, NAO, NAO, NAO) :: L4
+
 
 
     !$omp parallel default(shared)
