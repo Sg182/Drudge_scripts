@@ -6,7 +6,7 @@ Use Constants
 Use CCLamCCSDTQ
 Implicit None
 Private
-Public  :: BroydenIterTCC_Z, Mat2Vec, Vec2Mat, BroydenStep, UpdateBroyden,ShutDownBroyden_Z, SetUpBroyden_Z, EvalF_Z
+Public  :: BroydenIterCCSDTQ_Z, Mat2Vec, Vec2Mat, BroydenStep, UpdateBroyden,ShutDownBroyden_Z, SetUpBroyden_Z, EvalF_Z
 
 !nBrd: # of unknowns, pBrd: # of Broyden step stored
     Integer                        :: nBrd, pBrd
@@ -28,7 +28,7 @@ Public  :: BroydenIterTCC_Z, Mat2Vec, Vec2Mat, BroydenStep, UpdateBroyden,ShutDo
     Logical                        :: DoCCSD,DoCCSDT
 contains 
 
-Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCDIn, &
+Subroutine BroydenIterCCSDTQ_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCDIn, &
                               H00,H20,H11,H02,H40,H31,H22,HT22,H13,H04)!,naobrd,nbrd) ! I made changes here included naobrd,nbrd
     Implicit None
     Integer,           Intent(In)    :: NAO, pBrdIn! ,naobrd,nbrd ! added naobrd, nbrd
@@ -220,8 +220,8 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
         Open(70,File="Chk_Z3",status="Replace")
         Write(70,*) Z3
         Close(70)
-        Open(70,File="Chk_Z3",status="Replace")
-        Write(70,*) Z3
+        Open(70,File="Chk_Z4",status="Replace")
+        Write(70,*) Z4
         Close(70)
         Stop 'Too many cycles in PbarHbar Feedback loop'
       EndIf
@@ -269,9 +269,9 @@ If (IAlloc/=0) Stop "Could not allocate in final residual check"
 
 ! Evaluate F at the *final* amplitudes (xnew is already the final)
 !Call Mat2Vec(xold,T1,T2,T3,T4,NAOBrd,nBrd)    ! pack current T back to xold
-Call EvalF(xold, fx_final, NAOBrd, nBrd)
+Call EvalF_Z(xold, fx_final, NAOBrd, nBrd)
 
-Ene = EneBrd
+!Ene = EneBrd
 
 Call Vec2Mat(fx_final, R1fin, R2fin, R3fin,R4fin, NAOBrd, nBrd)
 
@@ -344,7 +344,7 @@ END BLOCK
     If(IAlloc/=0) Stop "Could not deallocate in BroydenIter"
     Call ShutDownBroyden_Z
     Return
-    End Subroutine BroydenIterTCC_Z
+    End Subroutine BroydenIterCCSDTQ_Z
 
 Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
                             H00,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
@@ -498,7 +498,7 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
     Do J = 2, K-1
     Do I = 1, J-1
         IamNum = IamNum + 1
-        TZ(I,J,K)    = y(IamNum)
+        Z3(I,J,K)    = y(IamNum)
         
     EndDo
     EndDo
@@ -539,9 +539,9 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
     Integer                          :: IAlloc
 ! Allocate
     Allocate(Z1(NAOBrd), Z2(NAOBrd,NAOBrd),     &
-            Z3(NAOBrd,NAOBrd,NAOBrd,NAOBrd), Z4(NAOBrd,NAOBrd,NAOBrd,NAOBrd) ,&
+            Z3(NAOBrd,NAOBrd,NAOBrd), Z4(NAOBrd,NAOBrd,NAOBrd,NAOBrd) ,&
              L1(NAOBrd), L2(NAOBrd,NAOBrd), &
-             L3(NAOBrd,NAOBrd,NAOBrd,NAOBrd), L4(NAOBrd,NAOBrd,NAOBrd,NAOBrd),&
+             L3(NAOBrd,NAOBrd,NAOBrd), L4(NAOBrd,NAOBrd,NAOBrd,NAOBrd),&
              Stat=IAlloc)
     If(IAlloc /= 0) Stop "Could not allocate in EvalF"
 ! Determine what T1 and T2 are
@@ -557,7 +557,7 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
         Z3 = Zero
         Z4 = Zero
     ENDIF    
-    If(DoCCSDT) T4 = Zero
+    If(DoCCSDT) Z4 = Zero
     Call CCSDTQ_Z(L1,L2,L3,L4,Z1,Z2,Z3,Z4,T1Brd,T2Brd,T3Brd,T4Brd,NAOBrd,  &             !This function Calculates Energy
           H20Brd,H11Brd,H02Brd,H40Brd,H31Brd,H22Brd,HT22Brd,H13Brd,H04Brd)
     
@@ -570,7 +570,7 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
 ! Put dUtilde into dy
     Call Mat2Vec(fx,L1,L2,L3,L4,NAOBrd,nBrd)
 ! Deallocate
-    Deallocate(Z1, L1, Z2, L2, Z3, L4, Z4, L4,  & 
+    Deallocate(Z1, L1, Z2, L2, Z3, L3, Z4, L4,  & 
                Stat=IAlloc)
     If(IAlloc /= 0) Stop "Could not deallocate in EvalF"
     Return
@@ -764,8 +764,8 @@ Subroutine PrintAmpsResFromVecZ(unit,x,fx,NAOBrd,nBrd,nsBrd,ndBrd,ntBrd)
   Call Vec2Mat(x ,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
   Call Vec2Mat(fx,L1,L2,L3,L4,NAOBrd,nBrd)
 
-  Call PrintAmpsResCore(unit,'Z', T1,T2, NAOBrd)
-  Call PrintAmpsResCore(unit,'L', R1,R2, NAOBrd)
+  Call PrintAmpsResCore(unit,'Z', Z1,Z2,Z3,Z4, NAOBrd)
+  Call PrintAmpsResCore(unit,'L', L1,L2,L3,L4, NAOBrd)
 
   Deallocate(Z1,Z2,Z3,Z4,L1,L2,L3,L4, Stat=IAlloc)
   If(IAlloc /= 0) Stop "Could not deallocate in PrintAmpsResFromVec"
