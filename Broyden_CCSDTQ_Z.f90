@@ -25,7 +25,7 @@ Public  :: BroydenIterTCC_Z, Mat2Vec, Vec2Mat, BroydenStep, UpdateBroyden,ShutDo
     Complex(Kind=pr), Allocatable  :: MixVec(:)
     Complex(Kind=pr)               :: EneBrd
     Logical                        :: DoCCD = .false.
-
+    Logical                        :: DoCCSD,DoCCSDT
 contains 
 
 Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCDIn, &
@@ -94,6 +94,12 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
     
     print*, "Z1 at the beginning is: ", maxval(real(Z1))
     print*, "Z2 at the beginning is: ", maxval(real(Z2))
+    print*, "Z3 at the beginning is: ", maxval(real(Z3))
+    print*, "Z4 at the beginning is: ", maxval(real(Z4))
+    DoCCD = DoCCDIn
+    DoCCD = .FALSE.
+    DoCCSD = .TRUE.
+    DoCCSDT = .FALSE.
  
 ! Allocate
     Allocate(xold(nBrd), xnew(nBrd), fold(nBrd), fnew(nBrd),    &
@@ -105,7 +111,7 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
       If(IAlloc/=0) Stop "Could not allocate in BroydenIter"
     EndIf
 !   Write(*,*) "Entered BCS CCSD"
-    Open(8,File='Output',Position='Append')
+    Open(8,File='OutputZ',Position='Append')
     Write(8,1020)
     Write(8,1010)
     Write(8,1020)
@@ -137,6 +143,39 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
       Z2(I,J) = -One/Denom 
     EndDo
     EndDo
+    Z3 = zero
+    Z4 = zero
+
+! --- Triples preconditioner (i<j<k) ---
+    Do K = 3, NAO
+    Do J = 2, K-1
+    Do I = 1, J-1
+      Denom = HT22(I,I)+HT22(J,J)+HT22(K,K)                       &
+            + Two*(H11(I)+H11(J)+H11(K))                          &
+            + Four*( (H22(I,I)+H22(J,J)+H22(K,K))                 &
+                   + Two*( H22(I,J)+H22(I,K)+H22(J,K) ) )
+      call floor_complex(Denom, 0.60_pr)     ! ← stronger floor for T3
+      Z3(I,J,K) = -One/Denom
+    EndDo
+    EndDo
+    EndDo
+
+! --- Quadruples preconditioner (i<j<k<l) ---
+    Do L = 4, NAO
+    Do K = 3, L-1
+    Do J = 2, K-1
+      Do I = 1, J-1
+        Denom = HT22(I,I)+HT22(J,J)+HT22(K,K)+HT22(L,L)            &
+              + Two*(H11(I)+H11(J)+H11(K)+H11(L))                  &
+              + Four*( (H22(I,I)+H22(J,J)+H22(K,K)+H22(L,L))       &
+                     + Two*( H22(I,J)+H22(I,K)+H22(I,L)            &
+                            + H22(J,K)+H22(J,L)+H22(K,L) ) )
+        call floor_complex(Denom, 0.60_pr)   ! ← stronger floor for T4
+        Z4(I,J,K,L) = -One/Denom
+      EndDo
+        EndDo
+    EndDo
+    EndDo
    
 
     Call Mat2Vec(MixVec,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
@@ -155,7 +194,7 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
 
       ! Print every 10 iterations to avoid huge logs; change 10 -> 1 to print every iter
       If (mod(NIter,10)==1 .or. NIter<=3) then
-      Call PrintAmpsResFromVec(8, xnew, fnew, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd)
+      Call PrintAmpsResFromVecZ(8, xnew, fnew, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd)
       End If
 
       ResOld = ResNew
@@ -216,6 +255,73 @@ Subroutine BroydenIterTCCSD_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCCD
 
     Call Vec2Mat(xnew,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
     !Ene = EneBrd
+
+    !================= === FINAL RESIDUAL CHECK (authoritative) ==================================================================
+ BLOCK
+Complex(Kind=pr), Allocatable :: fx_final(:)
+Complex(Kind=pr), Allocatable :: R1fin(:), R2fin(:,:), R3fin(:,:,:), R4fin(:,:,:,:)
+Real(Kind=pr) :: maxAll, maxR1, maxR2, maxR3, maxR4
+
+
+Allocate(fx_final(nBrd), R1fin(NAOBrd), R2fin(NAOBrd,NAOBrd), R3fin(NAOBrd,NAOBrd,NAOBrd),& 
+        R4fin(NAOBrd,NAOBrd,NAOBrd,NAOBrd), Stat=IAlloc)
+If (IAlloc/=0) Stop "Could not allocate in final residual check"
+
+! Evaluate F at the *final* amplitudes (xnew is already the final)
+!Call Mat2Vec(xold,T1,T2,T3,T4,NAOBrd,nBrd)    ! pack current T back to xold
+Call EvalF(xold, fx_final, NAOBrd, nBrd)
+
+Ene = EneBrd
+
+Call Vec2Mat(fx_final, R1fin, R2fin, R3fin,R4fin, NAOBrd, nBrd)
+
+maxR1 = maxval(abs(R1fin))
+! doubles packing i<j only:
+maxR2 = 0.0_pr
+Do j=2,NAOBrd
+  Do i=1,j-1
+    maxR2 = max(maxR2, abs(R2fin(i,j)))
+  End Do
+End Do
+! triples packing i<j<k only:
+maxR3 = 0.0_pr
+Do k=3,NAOBrd
+  Do j=2,k-1
+    Do i=1,j-1
+      maxR3 = max(maxR3, abs(R3fin(i,j,k)))
+    End Do
+  End Do
+End Do
+
+maxR4 = 0.0_pr
+Do l = 4,NAOBrd
+Do k=3,l-1
+  Do j=2,k-1
+    Do i=1,j-1
+      maxR4 = max(maxR4, abs(R4fin(i,j,k,l)))
+    End Do
+  End Do
+End Do
+End Do
+maxAll = max( maxR1, max( maxR2, max( maxR3, maxR4 ) ) )
+
+write(8,'(A,1PE12.4)') 'FINAL max|Res1| = ', maxR1
+write(8,'(A,1PE12.4)') 'FINAL max|Res2| = ', maxR2
+write(8,'(A,1PE12.4)') 'FINAL max|Res3| = ', maxR3
+write(8,'(A,1PE12.4)') 'FINAL max|Res4| = ', maxR4
+write(8,'(A,1PE12.4)') 'FINAL max|Res | = ', maxAll
+Call PrintAmpsResFromVecZ(8, xnew, fx_final, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd)
+!Call PrintAmpsResCore(unit,'T', T1,T2,T3,T4, NAOBrd)
+! If not actually converged, flag it clearly:
+If (maxAll > TolMax) Then
+  write(8,'(A)') '*** WARNING: Residual > TolMax at exit; NOT converged by residual! ***'
+End If
+
+Deallocate(fx_final, R1fin, R2fin, R3fin,R4fin, Stat=IAlloc)
+If (IAlloc/=0) Stop "Could not deallocate in final residual check"
+END BLOCK
+! ==========================================================================================================================
+! =========================================================================================================================
     Write(8,1020)
     Write(8,1050) NIter
     !Write(8,1070) Real(EneBrd)
@@ -447,10 +553,20 @@ Subroutine SetUpBroyden_Z(BCSU,BCSV,NAO,T1,T2,T3,T4, &
     Call Vec2Mat(x,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
 ! Build Residuals 
     If(DoCCD) Z1 = Zero ! CCD!
+    IF(DoCCSD) then
+        Z3 = Zero
+        Z4 = Zero
+    ENDIF    
+    If(DoCCSDT) T4 = Zero
     Call CCSDTQ_Z(L1,L2,L3,L4,Z1,Z2,Z3,Z4,T1Brd,T2Brd,T3Brd,T4Brd,NAOBrd,  &             !This function Calculates Energy
           H20Brd,H11Brd,H02Brd,H40Brd,H31Brd,H22Brd,HT22Brd,H13Brd,H04Brd)
     
     If(DoCCD) L1 = Zero ! CCD!
+    If(DoCCSD) then
+     L3 = Zero
+     L4 = Zero
+    EndIf
+    If(DoCCSDT) L4  = Zero
 ! Put dUtilde into dy
     Call Mat2Vec(fx,L1,L2,L3,L4,NAOBrd,nBrd)
 ! Deallocate
@@ -630,55 +746,64 @@ subroutine scale_mix_blocks(mv, ns, nd, nt, nq, s1, s2, s3, s4)
   end subroutine cap_step
 
 !    ! ---------- Helpers to print amplitudes & residuals ----------
-Subroutine PrintAmpsResFromVec(unit,x,fx,NAOBrd,nBrd,nsBrd,ndBrd,ntBrd)
+Subroutine PrintAmpsResFromVecZ(unit,x,fx,NAOBrd,nBrd,nsBrd,ndBrd,ntBrd)
   Use, Intrinsic :: iso_fortran_env, Only: output_unit
   Implicit None
   Integer,           Intent(In) :: unit, NAOBrd, nBrd, nsBrd, ndBrd, ntBrd
   Complex(Kind=pr),  Intent(In) :: x(nBrd), fx(nBrd)
-  Complex(Kind=pr), Allocatable :: T1(:), T2(:,:)
-  Complex(Kind=pr), Allocatable :: R1(:), R2(:,:)
+  Complex(Kind=pr), Allocatable :: Z1(:), Z2(:,:), Z3(:,:,:), Z4(:,:,:,:)
+  Complex(Kind=pr), Allocatable :: L1(:), L2(:,:), L3(:,:,:), L4(:,:,:,:)
   Integer                       :: IAlloc
 
-  Allocate(T1(NAOBrd), T2(NAOBrd,NAOBrd),&
-           R1(NAOBrd), R2(NAOBrd,NAOBrd),&
+  Allocate(Z1(NAOBrd), Z2(NAOBrd,NAOBrd), Z3(NAOBrd,NAOBrd,NAOBrd), Z4(NAOBrd,NAOBrd,NAOBrd,NAOBrd),&
+           L1(NAOBrd), L2(NAOBrd,NAOBrd), L3(NAOBrd,NAOBrd,NAOBrd), L4(NAOBrd,NAOBrd,NAOBrd,NAOBrd),&
            Stat=IAlloc)
   If(IAlloc /= 0) Stop "Could not allocate in PrintAmpsResFromVec"
 
   ! Unpack current amplitudes and residuals using your Vec2Mat
-  Call Vec2Mat(x ,T1,T2,NAOBrd,nBrd)
-  Call Vec2Mat(fx,R1,R2,NAOBrd,nBrd)
+  Call Vec2Mat(x ,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
+  Call Vec2Mat(fx,L1,L2,L3,L4,NAOBrd,nBrd)
 
   Call PrintAmpsResCore(unit,'Z', T1,T2, NAOBrd)
   Call PrintAmpsResCore(unit,'L', R1,R2, NAOBrd)
 
-  Deallocate(T1,T2,R1,R2, Stat=IAlloc)
+  Deallocate(Z1,Z2,Z3,Z4,L1,L2,L3,L4, Stat=IAlloc)
   If(IAlloc /= 0) Stop "Could not deallocate in PrintAmpsResFromVec"
-End Subroutine PrintAmpsResFromVec
+End Subroutine PrintAmpsResFromVecZ
 
 
-Subroutine PrintAmpsResCore(unit, tag, A1,A2, NAO)
+Subroutine PrintAmpsResCore(unit, tag, A1,A2,A3,A4,NAO)
   Implicit None
   Integer,           Intent(In) :: unit, NAO
   Character(len=*),  Intent(In) :: tag   ! 'T' or 'R'
   Complex(Kind=pr),  Intent(In) :: A1(NAO)
   Complex(Kind=pr),  Intent(In) :: A2(NAO,NAO)
-  
+  Complex(Kind=pr),  Intent(In) :: A3(NAO,NAO,NAO)
+  Complex(Kind=pr),  Intent(In) :: A4(NAO,NAO,NAO,NAO)
+   
   Real(Kind=pr) :: n1,n2,n3,n4, m1,m2,m3,m4
   Integer :: i,j,k,l, nshow
 
+   
   n1 = sqrt( sum( abs(A1)**2 ) )
   n2 = sqrt( sum( abs(A2)**2 ) )
- 
+  n3 = sqrt( sum( abs(A3)**2 ) )
+  n4 = sqrt( sum( abs(A4)**2 ) )
   m1 = maxval( abs(A1) )
   m2 = maxval( abs(A2) )
+  m3 = maxval( abs(A3) )
+  m4 = maxval( abs(A4) )
+ 
   
   Write(unit,'(A)')        '------------- '//trim(tag)//' summary -------------'
   Write(unit,'(A,1PE12.4)') trim(tag)//'1: ||.||2 = ', n1
   Write(unit,'(A,1PE12.4)') trim(tag)//'2: ||.||2 = ', n2
- 
+  Write(unit,'(A,1PE12.4)') trim(tag)//'3: ||.||2 = ', n3
+  Write(unit,'(A,1PE12.4)') trim(tag)//'4: ||.||2 = ', n4
   Write(unit,'(A,1PE12.4)') 'max|'//trim(tag)//'1| = ', m1
   Write(unit,'(A,1PE12.4)') 'max|'//trim(tag)//'2| = ', m2
-  
+  Write(unit,'(A,1PE12.4)') 'max|'//trim(tag)//'3| = ', m3
+  Write(unit,'(A,1PE12.4)') 'max|'//trim(tag)//'4| = ', m4
 
   ! Print a few sample entries (packed ordering)
   nshow = min(5, NAO)
@@ -694,6 +819,14 @@ Subroutine PrintAmpsResCore(unit, tag, A1,A2, NAO)
     end do
   end do
 
+  Write(unit,'(A)') 'Samples '//trim(tag)//'3(i<j<k):'
+  do k=3,min(NAO,2+nshow)
+    do j=2,min(k-1,1+nshow)
+      do i=1,min(j-1,nshow)
+        Write(unit,'(A,3I4,A,2(1PE12.4,1X))') '  (i,j,k)=',i,j,k,'  ', Real(A3(i,j,k)), Aimag(A3(i,j,k))
+      end do
+    end do
+  end do
   
 End Subroutine PrintAmpsResCore
 
