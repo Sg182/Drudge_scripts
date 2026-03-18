@@ -23,7 +23,7 @@ Public  :: BroydenIterCCSDTQ_Z, Mat2Vec, Vec2Mat, BroydenStep, UpdateBroyden,Shu
     Complex(Kind=pr), Allocatable  :: T3Brd(:,:,:), T4Brd(:,:,:,:)
     
     Complex(Kind=pr), Allocatable  :: MixVec(:)
-    Complex(Kind=pr)               :: EneBrd
+    !Complex(Kind=pr)               :: EneBrd
     Logical                        :: DoCCD = .false.
     Logical                        :: DoCCSD,DoCCSDT
 contains 
@@ -130,7 +130,7 @@ Subroutine BroydenIterCCSDTQ_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCC
     Call EvalF_Z(xold,fold,NAOBrd,nBrd)
     ResOld = Sqrt(Dot_Product(fold,fold))
     ResNew = ResOld
-    Write(8,1040) Real(EneBrd),NIter,dT
+    !Write(8,1040) Real(EneBrd),NIter,dT
 ! Build the mixing vector (Approximate -J^-1)
     Do I = 1, NAO
       Denom = HT22(I,I) + Two*H11(I) + Four*H22(I,I) 
@@ -205,7 +205,7 @@ Subroutine BroydenIterCCSDTQ_Z(Z1,Z2,Z3,Z4,T1,T2,T3,T4,BCSU,BCSV,NAO,pBrdIn,DoCC
 ! Update dF and dx matrices
      ! Write(*,*) "nBrd = ", nBrd
       Call UpdateBroyden(dF,dx,fnew,fold,xnew,xold,nBrd, pBrd)
-      Write(8,1040) Real(EneBrd),NIter,dT
+      !Write(8,1040) Real(EneBrd),NIter,dT
       
       If (NIter > CycMax) then
         Call Vec2Mat(xnew,Z1,Z2,Z3,Z4,NAOBrd,nBrd)
@@ -323,19 +323,19 @@ END BLOCK
 ! ==========================================================================================================================
 ! =========================================================================================================================
     Write(8,1020)
-    Write(8,1050) NIter
+    !Write(8,1050) NIter
     !Write(8,1070) Real(EneBrd)
     !Write(8,1080) Aimag(EneBrd)
     Write(8,1000)
     Close(8)
 !   Write(*,*) "UCCSD energy from Broyden:", EneBrd
 ! Outputs
-    1000  Format(14x,'**************************************************')
-    1010  Format(14X,'*          BCS CCSD summary follows              *')
-    1020  Format(14x,'*------------------------------------------------*')
-    1030  Format(14X,'*   CCSD Energy    Iteration    Biggest Res      *')
-    1040  Format(14X,'* ',F15.10,2x,I5,7X,F14.10,4x,'*')
-    1050  Format(14x,'*  UCC_Z has converged in ',I3,' iterations',11x,'*')
+    !1000  Format(14x,'**************************************************')
+    !1010  Format(14X,'*          BCS CCSD summary follows              *')
+    !1020  Format(14x,'*------------------------------------------------*')
+    !1030  Format(14X,'*   CCSD Energy    Iteration    Biggest Res      *')
+    !1040  Format(14X,'* ',F15.10,2x,I5,7X,F14.10,4x,'*')
+    !1050  Format(14x,'*  UCC_Z has converged in ',I3,' iterations',11x,'*')
     !1070  Format(14x,'*  Final UCC Energy is (real) ',F15.9,'a.u.*')
     !1080  Format(14x,'*  Final UCC Energy is (imag) ',F15.9,'a.u.*')
 ! deallocate
