@@ -4,7 +4,7 @@
 
     Contains
 
-Subroutine CCSD_SpSq(SzSz,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
+Subroutine CCSD_SpSq(SpSp,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
     Implicit None
     Integer,           Intent(In)    :: NAO
     Complex (Kind=pr), Intent(In)    :: T1(NAO), T2(NAO,NAO)
