@@ -17,7 +17,7 @@ Subroutine CCSD_SpSq(SpSq,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H
     Complex (Kind=pr), Intent(Out)   :: SpSq(NAO,NAO) 
     Integer                          :: p, q, r, s, i, j, k, l
 
-    Complex (Kind=pr)                :: temp
+    Complex (Kind=pr)                :: tmp
     complex(kind=pr) , dimension(NAO) :: tau0
     complex(kind=pr) , dimension(NAO, NAO) :: tau1
     complex(kind=pr) , dimension(NAO) :: tau2
@@ -2121,7 +2121,7 @@ Subroutine CCSD_SpSq(SpSq,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H
     do p=1, NAO
         do q=1, NAO
             SpSq(p, q) = SpSq(p, q) + ( &
-                 / 4 &
+                1.0_pr / 4.0_pr &
             )
         end do
     end do
