@@ -1,10 +1,10 @@
-Module CCSpSq
+Module CCSDSpSq
     Use Precision
     Use Constants
 
     Contains
 
-Subroutine CCSD_SpSq(SpSp,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
+Subroutine CCSD_SpSq(SpSq,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
     Implicit None
     Integer,           Intent(In)    :: NAO
     Complex (Kind=pr), Intent(In)    :: T1(NAO), T2(NAO,NAO)
@@ -17,19 +17,7 @@ Subroutine CCSD_SpSq(SpSp,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H
     Complex (Kind=pr), Intent(Out)   :: SpSq(NAO,NAO) 
     Integer                          :: p, q, r, s, i, j, k, l
 
-   pure double precision function deltaf(p, q)
-   implicit none
-   integer, intent(in) :: p, q
-
-   if (p == q) then
-    deltaf = 1.0d0
-   else
-    deltaf = 0.0d0
-   end if
-
-   end function deltaf
-
-
+    Complex (Kind=pr)                :: temp
     complex(kind=pr) , dimension(NAO) :: tau0
     complex(kind=pr) , dimension(NAO, NAO) :: tau1
     complex(kind=pr) , dimension(NAO) :: tau2
@@ -83,7 +71,7 @@ Subroutine CCSD_SpSq(SpSp,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H
     complex(kind=pr) , dimension(NAO) :: tau50
     complex(kind=pr) , dimension(NAO) :: tau51
     complex(kind=pr) , dimension(NAO) :: tau52
-    complex(kind=pr) , dimension(NAO, NAO) :: SpSq
+  
 
 
     !$omp parallel default(shared)
@@ -2433,4 +2421,17 @@ Subroutine CCSD_SpSq(SpSp,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H
     end do
     end do
 End Subroutine CCSD_SpSq
+
+pure double precision function deltaf(p, q)
+   implicit none
+   integer, intent(in) :: p, q
+
+   if (p == q) then
+    deltaf = 1.0d0
+   else
+    deltaf = 0.0d0
+   end if
+
+   end function deltaf
+
 End Module CCSDSpSq
