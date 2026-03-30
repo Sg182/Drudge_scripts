@@ -4,11 +4,11 @@ Module CCSDSpSq
 
     Contains
 
-Subroutine CCSD_SpSq(SpSq,U,V,z1,z2_in,T1,T2_in,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
+Subroutine CCSD_SpSq(SpSq,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H04)
     Implicit None
     Integer,           Intent(In)    :: NAO
-    Complex (Kind=pr), Intent(In)    :: T1(NAO), T2_in(NAO,NAO)
-    Complex (Kind=pr), Intent(In)    :: z1(NAO), z2_in(NAO,NAO)
+    Complex (Kind=pr), Intent(In)    :: T1(NAO), T2(NAO,NAO)
+    Complex (Kind=pr), Intent(In)    :: z1(NAO), z2(NAO,NAO)
     Complex (Kind=pr), Intent(In)    :: H20(NAO), H11(NAO), H02(NAO)
     Complex (Kind=pr), Intent(In)    :: H40(NAO,NAO), H31(NAO,NAO)
     Complex (Kind=pr), Intent(In)    :: H04(NAO,NAO), H13(NAO,NAO)
@@ -73,20 +73,20 @@ Subroutine CCSD_SpSq(SpSq,U,V,z1,z2_in,T1,T2_in,NAO,H20,H11,H02,H40,H31,H22,HT22
     complex(kind=pr) , dimension(NAO) :: tau52
   
 
-    Complex (Kind=pr)                :: T2(NAO,NAO), z2(NAO,NAO)
+  !  Complex (Kind=pr)                :: T2(NAO,NAO), z2(NAO,NAO)
 
-    T2 = 0.0_pr
-    z2 = 0.0_pr
+  !  T2 = 0.0_pr
+  !  z2 = 0.0_pr
 
-    do p = 1, NAO
-        T2(p,p) = 0.0_pr
-        z2(p,p) = 0.0_pr
-        do q = p+1, NAO
+   ! do p = 1, NAO
+   !     T2(p,p) = 0.0_pr
+   !     z2(p,p) = 0.0_pr
+   !     do q = p+1, NAO
             ! keep LOWER triangle only: (q,p), zero (p,q)
-            T2(q,p) = 0.5_pr * (T2_in(q,p) + T2_in(p,q))
-            z2(q,p) = 0.5_pr * (z2_in(q,p) + z2_in(p,q))
-        end do
-    end do
+   !         T2(q,p) = 0.5_pr * (T2_in(q,p) + T2_in(p,q))
+   !         z2(q,p) = 0.5_pr * (z2_in(q,p) + z2_in(p,q))
+   !     end do
+   ! end do
 
     !$omp parallel default(shared)
 
