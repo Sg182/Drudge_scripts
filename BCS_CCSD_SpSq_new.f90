@@ -2414,7 +2414,8 @@ Subroutine CCSD_SpSq(SpSq,U,V,z1,z2,T1,T2,NAO,H20,H11,H02,H40,H31,H22,HT22,H13,H
 
     !$omp end parallel
     do p = 1, NAO
-    do q = p, NAO
+	SpSq(p,p) = 0.75_pr
+    do q = p+1, NAO
        tmp = 0.5_pr * (SpSq(p,q) + (SpSq(q,p)))
        SpSq(p,q) = tmp
        SpSq(q,p) = (tmp)
