@@ -23,8 +23,10 @@ subroutine CCSD_SpSq(SpSq, T1, T2, z1, z2, NAO, &
    complex(kind=pr), intent(in) :: S22NN(NAO,NAO)
    complex(kind=pr), intent(in) :: ST22pq(NAO,NAO), ST22qp(NAO,NAO)
    complex(kind=pr), intent(in) :: S13pq(NAO,NAO), S13qp(NAO,NAO)
-
+   integer                      :: p,q,r,s,i,j,k,l
    complex(kind=pr), intent(out) :: SpSq(NAO,NAO)
+   complex(kind=pr) :: tmp
+
 
 
 
