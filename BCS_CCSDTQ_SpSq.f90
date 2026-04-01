@@ -1013,7 +1013,7 @@ subroutine CCSDTQ_SpSq(SpSq, T1,T2,T3,T4, z1, z2,z3,z4, NAO, &
     end do
 End Subroutine CCSDTQ_SpSq
 
-pure double precision function deltaf(p, q)
+double precision function deltaf(p, q)
    implicit none
    integer, intent(in) :: p, q
 
