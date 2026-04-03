@@ -5,8 +5,8 @@ Module CCSDTQSpSqGrad
     Contains
 
 subroutine CCSDTQ_SpSq_Grad(x, &
-    T1, T2,T3,T4 &
-    Z1, Z2,Z3,Z4 &
+    T1, T2,T3,T4, &
+    Z1, Z2,Z3,Z4, &
     NAO, &
     H00, H20, H11, H02, H40, H31, H22, HT22, H13, H04, &
     S00, S20p, S20q, S11p, S11q, S02p, S02q, &
