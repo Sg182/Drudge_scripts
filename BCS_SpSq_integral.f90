@@ -1,9 +1,13 @@
+!====================================================================!
+!            Integral transformation for SpSq
+!            SpSq = 1/2(Pdag_pP_q + Pdag_qP_p) + 1/4(N_pN_q - N_p - N_q + 1)
+!====================================================================!            
 subroutine SpSq_integral(U, V, NAO, &
                         S00, S20p, S20q, S11p, S11q, S02p, S02q, &
                         S40, S31pq, S31qp, S22NN, St22pq, St22qp, S13pq, S13qp, S04)
       use Precision
       implicit none
-
+    
       integer, intent(in) :: NAO
       complex(kind=pr), intent(in)  :: U(NAO), V(NAO)
 
