@@ -153,30 +153,30 @@ subroutine SpSq_integral(U, V, NAO, &
 
             !---------------------------------------------------------------
             ! Mixed N P
-            ! S13pq ~ N_p P_q
-            ! S13qp ~ N_q P_p
+            ! S31pq ~ N_p P_q
+            ! S31qp ~ N_q P_p
             !---------------------------------------------------------------
-            S13pq(p,q) = half*cup*cuq*up*vq                                     &
+            S31pq(p,q) = half*cup*cuq*up*vq                                     &
                         + half*cup*cvp*vq*vq                                     &
                         - half*cuq*cuq*up*vp                                     &
                         - half*cuq*cvp*vp*vq
 
-            S13qp(p,q) = -( half*cup*cup*uq*vq                                  &
+            S31qp(p,q) = -( half*cup*cup*uq*vq                                  &
                           - half*cup*cuq*uq*vp                                   &
                           + half*cup*cvq*vp*vq                                   &
                           - half*cuq*cvq*vp*vp )
 
             !---------------------------------------------------------------
             ! Mixed P^\dagger N
-            ! S31pq ~ P^\dagger_p N_q
-            ! S31qp ~ P^\dagger_q N_p
+            ! S13pq ~ Pdag_p N_q
+            ! S13qp ~ Pdag_q N_p
             !---------------------------------------------------------------
-            S31pq(p,q) = half*cuq*cvp*up*uq                                     &
+            S13pq(p,q) = half*cuq*cvp*up*uq                                     &
                         - half*cuq*cvq*up*up                                     &
                         + half*cvp*cvp*uq*vq                                     &
                         - half*cvp*cvq*up*vq
 
-            S31qp(p,q) = -( half*cup*cvp*uq*uq                                  &
+            S13qp(p,q) = -( half*cup*cvp*uq*uq                                  &
                           - half*cup*cvq*up*uq                                   &
                           + half*cvp*cvq*uq*vp                                   &
                           - half*cvq*cvq*up*vp )
