@@ -51,7 +51,10 @@ subroutine SpSq_integral(U, V, NAO, &
             !---------------------------------------------------------------
             ! Scalar part
             !---------------------------------------------------------------
-            S00(p,q) = cup*cvp*delta_pq*up*vp                                  &
+            if (p == q) then
+              S00(p,q) = cmplx(0.75_pr, 0.0_pr, kind=pr) !Sp^2 = 3/4 for spin-1/2
+            else
+                S00(p,q) = cup*cvp*delta_pq*up*vp                                  &
                      + half*cup*cvp*uq*vq                                       &
                      + half*cuq*cvq*up*vp                                       &
                      + cvp*cvp*delta_pq*vp*vp                                   &
@@ -59,6 +62,7 @@ subroutine SpSq_integral(U, V, NAO, &
                      - half*cvp*vp                                              &
                      - half*cvq*vq                                              &
                      + quarter
+            endif
 
             !---------------------------------------------------------------
             ! One-body P^\dagger parts
