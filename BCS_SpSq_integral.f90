@@ -1,13 +1,9 @@
-!====================================================================!
-!            Integral transformation for SpSq
-!            SpSq = 1/2(Pdag_pP_q + Pdag_qP_p) + 1/4(N_pN_q - N_p - N_q + 1)
-!====================================================================!            
 subroutine SpSq_integral(U, V, NAO, &
                         S00, S20p, S20q, S11p, S11q, S02p, S02q, &
                         S40, S31pq, S31qp, S22NN, St22pq, St22qp, S13pq, S13qp, S04)
       use Precision
       implicit none
-    
+
       integer, intent(in) :: NAO
       complex(kind=pr), intent(in)  :: U(NAO), V(NAO)
 
@@ -49,27 +45,42 @@ subroutine SpSq_integral(U, V, NAO, &
             ! Scalar part
             !---------------------------------------------------------------
             if (p == q) then
-              S00(p,q) = cmplx(0.75_pr, 0.0_pr, kind=pr) !Sp^2 = 3/4 for spin-1/2
+              S00(p,q) = cmplx(0.75_pr, 0.0_pr, kind=pr)
+              S20p(p,q)   = zero
+              S20q(p,q)   = zero
+              S11p(p,q)   = zero
+              S11q(p,q)   = zero
+              S02p(p,q)   = zero
+              S02q(p,q)   = zero
+              S40(p,q)    = zero
+              S31pq(p,q)  = zero
+              S31qp(p,q)  = zero
+              S22NN(p,q)  = zero
+              St22pq(p,q) = zero
+              St22qp(p,q) = zero
+              S13pq(p,q)  = zero
+              S13qp(p,q)  = zero
+              S04(p,q)    = zero
             else
-              S00(p,q) = up*uq*vp*vq + vp**2*vq**2 - half*vp**2 - half*vq**2 + quarter
-            end if
+              S00(p,q) = delta_pq*up*up*vp*vp+ up*uq*vp*vq + vp**2*vq**2 - half*vp**2 - half*vq**2 + quarter
+            
             
 
             !---------------------------------------------------------------
             ! One-body P^\dagger parts
             !---------------------------------------------------------------
-            S20p(p,q) = delta_pq*up**3*vp + half*up**2*uq*vq + up*vp*vq**2 &
+            S02p(p,q) = delta_pq*up**3*vp + half*up**2*uq*vq + up*vp*vq**2 &
                       - half*up*vp - half*uq*vp**2*vq
 
-            S20q(p,q) = delta_pq*up*vp**3 + half*up*uq**2*vp - half*up*vp*vq**2 &
+            S02q(p,q) = delta_pq*up*vp**3 + half*up*uq**2*vp - half*up*vp*vq**2 &
                       + uq*vp**2*vq - half*uq*vq
 
             !---------------------------------------------------------------
             ! One-body P parts
             ! For real U,V these are the same as O20p/O20q
             !---------------------------------------------------------------
-            S02p(p,q) = S20p(p,q)
-            S02q(p,q) = S20q(p,q)
+            S20p(p,q) = S02p(p,q)
+            S20q(p,q) = S02q(p,q)
 
             !---------------------------------------------------------------
             ! One-body N parts
@@ -89,13 +100,10 @@ subroutine SpSq_integral(U, V, NAO, &
             !---------------------------------------------------------------
             ! Two-body PP and P^\dagger P^\dagger
             !---------------------------------------------------------------
-            if (p == q) then
-                S04(p,q) = zero
-                S40(p,q) = zero
-            else
-                S04(p,q) = -half*up**2*vq**2 + up*uq*vp*vq - half*uq**2*vp**2
-                S40(p,q) = S04(p,q)
-            end if
+            
+            S40(p,q) = -half*up**2*vq**2 + up*uq*vp*vq - half*uq**2*vp**2
+            S04(p,q) = S40(p,q)
+           
             
 
             !---------------------------------------------------------------
@@ -114,6 +122,7 @@ subroutine SpSq_integral(U, V, NAO, &
 
             S31pq(p,q) = -S13pq(p,q)
             S31qp(p,q) =  S13pq(p,q)
+           endif
 
          end do
       end do
