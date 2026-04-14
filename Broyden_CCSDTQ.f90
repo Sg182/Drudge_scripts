@@ -283,55 +283,60 @@ EndDo
 
     Call Vec2Mat(xnew,T1,T2,T3,T4,NAOBrd,nBrd)
     Ene = EneBrd
+    Write(8,1020)
+    Write(8,1050) NIter
+    Write(8,1070) Real(Ene)!was EneBrd
+    Write(8,1080) Aimag(Ene)!was EneBrd
+    Write(8,1000)
 
  !================= === FINAL RESIDUAL CHECK (authoritative) ==================================================================
  BLOCK
-Complex(Kind=pr), Allocatable :: fx_final(:)
-Complex(Kind=pr), Allocatable :: R1fin(:), R2fin(:,:), R3fin(:,:,:), R4fin(:,:,:,:)
-Real(Kind=pr) :: maxAll, maxR1, maxR2, maxR3, maxR4
+  Complex(Kind=pr), Allocatable :: fx_final(:)
+  Complex(Kind=pr), Allocatable :: R1fin(:), R2fin(:,:), R3fin(:,:,:), R4fin(:,:,:,:)
+  Real(Kind=pr) :: maxAll, maxR1, maxR2, maxR3, maxR4
 
 
-Allocate(fx_final(nBrd), R1fin(NAOBrd), R2fin(NAOBrd,NAOBrd), R3fin(NAOBrd,NAOBrd,NAOBrd),& 
+  Allocate(fx_final(nBrd), R1fin(NAOBrd), R2fin(NAOBrd,NAOBrd), R3fin(NAOBrd,NAOBrd,NAOBrd),& 
         R4fin(NAOBrd,NAOBrd,NAOBrd,NAOBrd), Stat=IAlloc)
-If (IAlloc/=0) Stop "Could not allocate in final residual check"
+  If (IAlloc/=0) Stop "Could not allocate in final residual check"
 
 ! Evaluate F at the *final* amplitudes (xnew is already the final)
 !Call Mat2Vec(xold,T1,T2,T3,T4,NAOBrd,nBrd)    ! pack current T back to xold
-Call EvalF(xold, fx_final, NAOBrd, nBrd)
+  Call EvalF(xold, fx_final, NAOBrd, nBrd)
 
-Ene = EneBrd
+  !Ene = EneBrd
 
-Call Vec2Mat(fx_final, R1fin, R2fin, R3fin,R4fin, NAOBrd, nBrd)
+  Call Vec2Mat(fx_final, R1fin, R2fin, R3fin,R4fin, NAOBrd, nBrd)
 
-maxR1 = maxval(abs(R1fin))
+  maxR1 = maxval(abs(R1fin))
 ! doubles packing i<j only:
-maxR2 = 0.0_pr
-Do j=2,NAOBrd
+  maxR2 = 0.0_pr
+  Do j=2,NAOBrd
   Do i=1,j-1
     maxR2 = max(maxR2, abs(R2fin(i,j)))
   End Do
-End Do
+  End Do
 ! triples packing i<j<k only:
-maxR3 = 0.0_pr
-Do k=3,NAOBrd
+  maxR3 = 0.0_pr
+  Do k=3,NAOBrd
   Do j=2,k-1
     Do i=1,j-1
       maxR3 = max(maxR3, abs(R3fin(i,j,k)))
     End Do
+    End Do
   End Do
-End Do
 
-maxR4 = 0.0_pr
-Do l = 4,NAOBrd
-Do k=3,l-1
+  maxR4 = 0.0_pr
+  Do l = 4,NAOBrd
+  Do k=3,l-1
   Do j=2,k-1
     Do i=1,j-1
       maxR4 = max(maxR4, abs(R4fin(i,j,k,l)))
     End Do
   End Do
-End Do
-End Do
-maxAll = max( maxR1, max( maxR2, max( maxR3, maxR4 ) ) )
+  End Do
+  End Do
+  maxAll = max( maxR1, max( maxR2, max( maxR3, maxR4 ) ) )
 
 write(8,'(A,1PE12.4)') 'FINAL max|Res1| = ', maxR1
 write(8,'(A,1PE12.4)') 'FINAL max|Res2| = ', maxR2
@@ -350,12 +355,6 @@ If (IAlloc/=0) Stop "Could not deallocate in final residual check"
 END BLOCK
 ! ==========================================================================================================================
 ! =========================================================================================================================
-
-    Write(8,1020)
-    Write(8,1050) NIter
-    Write(8,1070) Real(Ene)!was EneBrd
-    Write(8,1080) Aimag(Ene)!was EneBrd
-    Write(8,1000)
     Close(8)
 !   Write(*,*) "UCCSD energy from Broyden:", EneBrd
 ! Outputs
@@ -586,7 +585,7 @@ END BLOCK
      Res3 = Zero
      Res4 = Zero
     EndIf
-    If(DoCCSDT) Res4  = Zero
+    If(DoCCSDT) Res4  = Zero 
     !Res3 = Zero
     !Res1 = zero
 ! Put dUtilde into dy
