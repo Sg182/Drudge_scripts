@@ -18,67 +18,67 @@ subroutine CCSD_Np(Np,U,V, T1, T2, z1, z2, NAO)
    integer                      :: p,q,r,s,i,j,k,l
 
 
-    complex(kind=pr), dimension(:), allocatable :: tau0
+    complex(kind=pr), dimension(:), allocatable :: tau0_npnq
 
-    complex(kind=pr), dimension(:), allocatable :: tau1
+    complex(kind=pr), dimension(:), allocatable :: tau1_npnq
 
-    complex(kind=pr), dimension(:), allocatable :: tau2
+    complex(kind=pr), dimension(:), allocatable :: tau2_npnq
 
-    complex(kind=pr), dimension(:), allocatable :: tau3
+    complex(kind=pr), dimension(:), allocatable :: tau3_npnq
 
     !$omp parallel default(shared)
 
-    allocate(tau0(NAO))
+    allocate(tau0_npnq(NAO))
     !$omp single
-    tau0 = 0.0
+    tau0_npnq = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
-            tau0(p) = tau0(p) + ( &
+            tau0_npnq(p) = tau0_npnq(p) + ( &
                 t2(p, q) * z2(p, q)&
             )
         end do
     end do
     !$omp end do
 
-    allocate(tau1(NAO))
+    allocate(tau1_npnq(NAO))
     !$omp single
-    tau1 = 0.0
+    tau1_npnq = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau1(p) = tau1(p) - ( &
-            2 * t1(p) * tau0(p)&
+        tau1_npnq(p) = tau1_npnq(p) - ( &
+            2 * t1(p) * tau0_npnq(p)&
         )
     
     end do
     !$omp end do
 
-    allocate(tau2(NAO))
+    allocate(tau2_npnq(NAO))
     !$omp single
-    tau2 = 0.0
+    tau2_npnq = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau2(p) = tau2(p) + ( &
-            tau0(p)&
+        tau2_npnq(p) = tau2_npnq(p) + ( &
+            tau0_npnq(p)&
         )
     
     end do
     !$omp end do
 
-    deallocate(tau0)
+    deallocate(tau0_npnq)
 
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau1(p) = tau1(p) + ( &
+        tau1_npnq(p) = tau1_npnq(p) + ( &
             t1(p)&
         )
     
@@ -88,7 +88,7 @@ subroutine CCSD_Np(Np,U,V, T1, T2, z1, z2, NAO)
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau1(p) = tau1(p) + ( &
+        tau1_npnq(p) = tau1_npnq(p) + ( &
             z1(p)&
         )
     
@@ -98,7 +98,7 @@ subroutine CCSD_Np(Np,U,V, T1, T2, z1, z2, NAO)
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau1(p) = tau1(p) - ( &
+        tau1_npnq(p) = tau1_npnq(p) - ( &
             t1(p)**2 * z1(p)&
         )
     
@@ -108,7 +108,7 @@ subroutine CCSD_Np(Np,U,V, T1, T2, z1, z2, NAO)
     !$omp do schedule(static)
     do p=1, NAO
         do q=1, NAO
-            tau1(p) = tau1(p) + ( &
+            tau1_npnq(p) = tau1_npnq(p) + ( &
                 z1(q) * t2(p, q)&
             )
         end do
@@ -123,33 +123,33 @@ subroutine CCSD_Np(Np,U,V, T1, T2, z1, z2, NAO)
     do p=1, NAO
     
         Np(p) = Np(p) + ( &
-            2 * tau1(p) * u(p) * v(p)&
+            2 * tau1_npnq(p) * u(p) * v(p)&
         )
     
     end do
     !$omp end do
 
-    deallocate(tau1)
+    deallocate(tau1_npnq)
 
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau2(p) = tau2(p) + ( &
+        tau2_npnq(p) = tau2_npnq(p) + ( &
             t1(p) * z1(p)&
         )
     
     end do
     !$omp end do
 
-    allocate(tau3(NAO))
+    allocate(tau3_npnq(NAO))
     !$omp single
-    tau3 = 0.0
+    tau3_npnq = 0.0
     !$omp end single
 
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau3(p) = tau3(p) + ( &
+        tau3_npnq(p) = tau3_npnq(p) + ( &
             u(p)**2&
         )
     
@@ -159,7 +159,7 @@ subroutine CCSD_Np(Np,U,V, T1, T2, z1, z2, NAO)
     !$omp do schedule(static)
     do p=1, NAO
     
-        tau3(p) = tau3(p) - ( &
+        tau3_npnq(p) = tau3_npnq(p) - ( &
             v(p)**2&
         )
     
@@ -170,15 +170,15 @@ subroutine CCSD_Np(Np,U,V, T1, T2, z1, z2, NAO)
     do p=1, NAO
     
         Np(p) = Np(p) + ( &
-            2 * tau2(p) * tau3(p)&
+            2 * tau2_npnq(p) * tau3_npnq(p)&
         )
     
     end do
     !$omp end do
 
-    deallocate(tau2)
+    deallocate(tau2_npnq)
 
-    deallocate(tau3)
+    deallocate(tau3_npnq)
 
     !$omp do schedule(static)
     do p=1, NAO
