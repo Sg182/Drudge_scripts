@@ -1,4 +1,4 @@
-!MODULE FOR Np EXPECTATION
+ !MODULE FOR Np EXPECTATION
 Module CCSDTQNp
     Use Precision
     Use Constants
