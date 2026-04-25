@@ -25,7 +25,7 @@ subroutine CCSDTQ_NpNq(NpNq, T1, T2,T3,T4, z1, z2,z3,z4, NAO, &
     complex(kind=pr), intent(in) :: N22NN(NAO,NAO)
     complex(kind=pr), intent(in) :: NT22pq(NAO,NAO), NT22qp(NAO,NAO)
     complex(kind=pr), intent(in) :: N13pq(NAO,NAO), N13qp(NAO,NAO)
-    integer                      :: p,q,r,s,i,j,k,l
+    integer                      :: p,p0,q,r,s,i,j,k,l
     complex(kind=pr), intent(out) :: NpNq(NAO,NAO)
     complex(kind=pr) :: tmp
 
