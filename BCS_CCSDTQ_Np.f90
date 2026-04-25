@@ -12,7 +12,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
    integer, intent(in) :: NAO
    complex(kind=pr), intent(in) :: T1(NAO), T2(NAO,NAO)
    complex(kind=pr), intent(in) :: T3(NAO,NAO,NAO), T4(NAO,NAO,NAO,NAO)
-   complex(kind=pr), intent(in) :: z1(NAO), z2(NAO,NAO)
+   complex(kind=pr), intent(in) :: z1(NAO), z2(NAO,NAO), z3(NAO,NAO,NAO), z4(NAO,NAO,NAO,NAO)
    complex(kind=pr), intent(in) :: U(NAO), V(NAO)
    complex(kind=pr), intent(out) :: Np(NAO)
 
