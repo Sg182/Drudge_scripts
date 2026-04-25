@@ -20,27 +20,27 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
 
  
 
-    complex(kind=pr), dimension(na) :: tau0_np
-    complex(kind=pr), dimension(na, na, na, na) :: tau1_np
-    complex(kind=pr), dimension(na, na, na) :: tau2_np
-    complex(kind=pr), dimension(na, na) :: tau3_np
-    complex(kind=pr), dimension(na) :: tau4_np
-    complex(kind=pr), dimension(na) :: tau5_np
-    complex(kind=pr), dimension(na) :: tau6_np
-    complex(kind=pr), dimension(na) :: tau7_np
+    complex(kind=pr), dimension(NAO) :: tau0_np
+    complex(kind=pr), dimension(NAO, NAO, NAO, NAO) :: tau1_np
+    complex(kind=pr), dimension(NAO, NAO, NAO) :: tau2_np
+    complex(kind=pr), dimension(NAO, NAO) :: tau3_np
+    complex(kind=pr), dimension(NAO) :: tau4_np
+    complex(kind=pr), dimension(NAO) :: tau5_np
+    complex(kind=pr), dimension(NAO) :: tau6_np
+    complex(kind=pr), dimension(NAO) :: tau7_np
      
 
 
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau0_np(p) = 0.0
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau0_np(p) = tau0_np(p) + ( &
             v(p)**2 &
         )
@@ -48,7 +48,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau0_np(p) = tau0_np(p) - ( &
             u(p)**2 &
         )
@@ -56,7 +56,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau0_np(p) = tau0_np(p) + ( &
             2 * t1(p) * u(p) * v(p) &
         )
@@ -71,10 +71,10 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
-                do s=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
+                do s=1, NAO
                     tau1_np(p, q, r, s) = 0.0
                 end do
             end do
@@ -83,10 +83,10 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
-                do s=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
+                do s=1, NAO
                     tau1_np(p, q, r, s) = tau1_np(p, q, r, s) + ( &
                         6 * u(p) * v(p) * t2(r, p) * t3(q, p, s) &
                     )
@@ -97,10 +97,10 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
-                do s=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
+                do s=1, NAO
                     tau1_np(p, q, r, s) = tau1_np(p, q, r, s) + ( &
                         tau0_np(p) * t4(s, p, q, r) &
                     )
@@ -118,9 +118,9 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
                 tau2_np(p, q, r) = 0.0
             end do
         end do
@@ -128,9 +128,9 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
                 tau2_np(p, q, r) = tau2_np(p, q, r) + ( &
                     2 * u(p) * v(p) * t2(q, p) * t2(r, p) &
                 )
@@ -140,9 +140,9 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
                 tau2_np(p, q, r) = tau2_np(p, q, r) + ( &
                     tau0_np(p) * t3(r, p, q) &
                 )
@@ -159,16 +159,16 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
+    do p=1, NAO
+        do q=1, NAO
             tau3_np(p, q) = 0.0
         end do
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
+    do p=1, NAO
+        do q=1, NAO
             tau3_np(p, q) = tau3_np(p, q) - ( &
                 u(p) * v(p) * z1(q) &
             )
@@ -177,8 +177,8 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
+    do p=1, NAO
+        do q=1, NAO
             tau3_np(p, q) = tau3_np(p, q) + ( &
                 tau0_np(p) * z2(q, p) &
             )
@@ -194,15 +194,15 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau4_np(p) = 0.0
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
                 tau4_np(p) = tau4_np(p) + ( &
                     z2(r, q) * t3(r, p, q) &
                 )
@@ -219,16 +219,16 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau5_np(p) = 0.0
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
-                do s=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
+                do s=1, NAO
                     tau5_np(p) = tau5_np(p) + ( &
                         z3(s, q, r) * t4(s, p, q, r) &
                     )
@@ -246,13 +246,13 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau6_np(p) = 0.0
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau6_np(p) = tau6_np(p) + ( &
             6 * t1(p) * u(p) &
         )
@@ -260,7 +260,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau6_np(p) = tau6_np(p) + ( &
             6 * u(p) * z1(p) &
         )
@@ -268,7 +268,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau6_np(p) = tau6_np(p) - ( &
             6 * u(p) * z1(p) * t1(p)**2 &
         )
@@ -276,7 +276,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau6_np(p) = tau6_np(p) + ( &
             3 * tau4_np(p) * u(p) &
         )
@@ -284,7 +284,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau6_np(p) = tau6_np(p) + ( &
             tau5_np(p) * u(p) &
         )
@@ -299,13 +299,13 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau7_np(p) = 0.0
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau7_np(p) = tau7_np(p) + ( &
             u(p)**2 &
         )
@@ -313,7 +313,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         tau7_np(p) = tau7_np(p) - ( &
             v(p)**2 &
         )
@@ -328,13 +328,13 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp parallel default(shared)
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         Np(p) = 0.0
     end do
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         Np(p) = Np(p) + ( &
             2 * v(p)**2 &
         )
@@ -342,10 +342,10 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
-                do s=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
+                do s=1, NAO
                     Np(p) = Np(p) - ( &
                         tau1_np(p, q, r, s) * z4(q, p, r, s) / 3 &
                     )
@@ -356,9 +356,9 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
-            do r=1, na
+    do p=1, NAO
+        do q=1, NAO
+            do r=1, NAO
                 Np(p) = Np(p) - ( &
                     tau2_np(p, q, r) * z3(q, p, r) &
                 )
@@ -368,8 +368,8 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
-        do q=1, na
+    do p=1, NAO
+        do q=1, NAO
             Np(p) = Np(p) - ( &
                 2 * t2(q, p) * tau3_np(p, q) &
             )
@@ -378,7 +378,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         Np(p) = Np(p) + ( &
             tau6_np(p) * v(p) / 3 &
         )
@@ -386,7 +386,7 @@ subroutine CCSDTQ_Np(Np,U,V, T1,T2,T3,T4, z1, z2,z3,z4, NAO)
     !$omp end do
 
     !$omp do schedule(static)
-    do p=1, na
+    do p=1, NAO
         Np(p) = Np(p) + ( &
             2 * t1(p) * tau7_np(p) * z1(p) &
         )
