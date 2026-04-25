@@ -13,7 +13,7 @@ subroutine CCSDTQ_NpNq(NpNq, T1, T2,T3,T4, z1, z2,z3,z4, NAO, &
     implicit none
     integer, intent(in) :: NAO
     complex(kind=pr), intent(in) :: T1(NAO), T2(NAO,NAO)
-    complex(kind=pr), intent(in) :: T1(NAO), T2(NAO,NAO)
+    complex(kind=pr), intent(in) :: T3(NAO,NAO,NAO), T4(NAO,NAO,NAO,NAO)
     complex(kind=pr), intent(in) :: z1(NAO), z2(NAO,NAO)
     complex(kind=pr), intent(in) :: z3(NAO,NAO,NAO), z4(NAO,NAO,NAO,NAO)
     complex(kind=pr), intent(in) :: N00(NAO,NAO)
